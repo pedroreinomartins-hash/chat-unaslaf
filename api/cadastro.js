@@ -4,6 +4,7 @@ import { google } from 'googleapis';
 
 const SHEET_ID = '1M9H-RikQ-2ATA7MX8maOydbmzx7a1x2pu0sz6r9OJ4M';
 const MAIN_TAB = 'consolidado_app';
+const HIST_TAB = 'Histórico';
 
 function validateSessionToken(token) {
   try {
@@ -27,9 +28,7 @@ function getSheetsClient() {
   return google.sheets({ version: 'v4', auth });
 }
 
-// Mapeamento coluna → índice (0-based)
-// K[10]=Email | M[12]=Telefone1 | P[15]=Logradouro | Q[16]=Número
-// R[17]=Complemento | S[18]=Bairro | T[19]=Cidade | U[20]=CEP | V[21]=UF
+// Campos editáveis: nome do campo → coluna na planilha
 const EDITABLE = {
   nome:        { col: 'B',  idx: 1  },
   email:       { col: 'K',  idx: 10 },
@@ -49,26 +48,29 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // Auth
   const auth = (req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
   const cpf = validateSessionToken(auth);
   if (!cpf) return res.status(401).json({ error: 'Sessao invalida ou expirada' });
 
   const sheets = getSheetsClient();
 
+  // Função auxiliar: localiza a linha do CPF
+  async function findRowIndex() {
+    const search = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: `${MAIN_TAB}!A:C`,
+    });
+    const rows = search.data.values || [];
+    for (let i = 1; i < rows.length; i++) {
+      if ((rows[i][2] || '').replace(/\D/g, '') === cpf) return i + 1;
+    }
+    return null;
+  }
+
   // ── GET ──────────────────────────────────────────────────────────────────
   if (req.method === 'GET') {
     try {
-      // Busca linha pelo CPF
-      const search = await sheets.spreadsheets.values.get({
-        spreadsheetId: SHEET_ID,
-        range: `${MAIN_TAB}!A:C`,
-      });
-      const rows = search.data.values || [];
-      let rowIndex = null;
-      for (let i = 1; i < rows.length; i++) {
-        if ((rows[i][2] || '').replace(/\D/g, '') === cpf) { rowIndex = i + 1; break; }
-      }
+      const rowIndex = await findRowIndex();
       if (!rowIndex) return res.status(404).json({ error: 'Associado nao encontrado' });
 
       const line = await sheets.spreadsheets.values.get({
@@ -114,21 +116,19 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Nome, e-mail e telefone sao obrigatorios' });
       }
 
-      // Busca rowIndex
-      const search = await sheets.spreadsheets.values.get({
-        spreadsheetId: SHEET_ID,
-        range: `${MAIN_TAB}!A:C`,
-      });
-      const rows = search.data.values || [];
-      let rowIndex = null;
-      for (let i = 1; i < rows.length; i++) {
-        if ((rows[i][2] || '').replace(/\D/g, '') === cpf) { rowIndex = i + 1; break; }
-      }
+      const rowIndex = await findRowIndex();
       if (!rowIndex) return res.status(404).json({ error: 'Associado nao encontrado' });
 
-      // Atualiza célula por célula — só os campos que vieram no body
+      // Lê valores atuais para registrar no histórico
+      const current = await sheets.spreadsheets.values.get({
+        spreadsheetId: SHEET_ID,
+        range: `${MAIN_TAB}!A${rowIndex}:BL${rowIndex}`,
+      });
+      const row = (current.data.values || [[]])[0] || [];
+
+      // Monta atualizações célula por célula
       const updates = [];
-      for (const [field, { col, idx }] of Object.entries(EDITABLE)) {
+      for (const [field, { col }] of Object.entries(EDITABLE)) {
         const val = (body[field] || '').trim();
         if (val) {
           updates.push({
@@ -142,12 +142,43 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Nenhum campo para atualizar' });
       }
 
+      // Salva na planilha principal
       await sheets.spreadsheets.values.batchUpdate({
         spreadsheetId: SHEET_ID,
         requestBody: {
           valueInputOption: 'RAW',
           data: updates,
         },
+      });
+
+      // Registra no Histórico
+      // Cabeçalho: Data/Hora | CPF | Nome | Logradouro | Número | Complemento
+      //            | Bairro | Cidade | CEP | UF | Email | Telefone | Alterado por
+      const ts = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+      const nome = (body.nome || row[1] || '').trim();
+
+      const histRow = [
+        ts,
+        (row[2] || '').trim(),                        // CPF
+        nome,                                          // Nome
+        (body.logradouro  || row[15] || '').trim(),   // Logradouro
+        (body.numero      || row[16] || '').trim(),   // Número
+        (body.complemento || row[17] || '').trim(),   // Complemento
+        (body.bairro      || row[18] || '').trim(),   // Bairro
+        (body.cidade      || row[19] || '').trim(),   // Cidade
+        (body.cep         || row[20] || '').trim(),   // CEP
+        (body.uf          || row[21] || '').trim(),   // UF
+        (body.email       || row[10] || '').trim(),   // Email
+        (body.telefone    || row[12] || '').trim(),   // Telefone
+        nome,                                          // Alterado por
+      ];
+
+      await sheets.spreadsheets.values.append({
+        spreadsheetId: SHEET_ID,
+        range: `${HIST_TAB}!A:M`,
+        valueInputOption: 'RAW',
+        insertDataOption: 'INSERT_ROWS',
+        requestBody: { values: [histRow] },
       });
 
       return res.status(200).json({ ok: true, message: 'Cadastro atualizado com sucesso' });
