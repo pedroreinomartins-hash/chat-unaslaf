@@ -4,7 +4,7 @@ import { google } from 'googleapis';
 
 const SHEET_ID = '1M9H-RikQ-2ATA7MX8maOydbmzx7a1x2pu0sz6r9OJ4M';
 const MAIN_TAB = 'consolidado_app';
-const HIST_TAB = 'Histórico';
+const HIST_TAB = 'Historico';
 
 function validateSessionToken(token) {
   try {
@@ -28,9 +28,10 @@ function getSheetsClient() {
   return google.sheets({ version: 'v4', auth });
 }
 
-// Campos editáveis: nome do campo → coluna na planilha
+// Campos editáveis → coluna na planilha principal
 const EDITABLE = {
   nome:        { col: 'B',  idx: 1  },
+  aposentado:  { col: 'Y',  idx: 24 },
   email:       { col: 'K',  idx: 10 },
   telefone:    { col: 'M',  idx: 12 },
   logradouro:  { col: 'P',  idx: 15 },
@@ -54,7 +55,6 @@ export default async function handler(req, res) {
 
   const sheets = getSheetsClient();
 
-  // Função auxiliar: localiza a linha do CPF
   async function findRowIndex() {
     const search = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
     return null;
   }
 
-  // ── GET ──────────────────────────────────────────────────────────────────
+  // ── GET ────────────────────────────────────────────────────────────────────
   if (req.method === 'GET') {
     try {
       const rowIndex = await findRowIndex();
@@ -85,6 +85,7 @@ export default async function handler(req, res) {
           siape:       (row[0]  || '').trim(),
           nome:        (row[1]  || '').trim(),
           cpf:         (row[2]  || '').trim(),
+          aposentado:  (row[24] || '').trim(),
           email:       (row[10] || '').trim(),
           telefone:    (row[12] || '').trim(),
           logradouro:  (row[15] || '').trim(),
@@ -95,7 +96,6 @@ export default async function handler(req, res) {
           cep:         (row[20] || '').trim(),
           uf:          (row[21] || '').trim(),
           situacao:    (row[22] || '').trim(),
-          tipo:        row[23] === 'Sim' ? 'Ativo' : (row[24] === 'Sim' ? 'Aposentado' : ''),
           orgao:       (row[33] || '').trim(),
           cargo:       (row[44] || '').trim(),
           rowIndex,
@@ -107,7 +107,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // ── PATCH ─────────────────────────────────────────────────────────────────
+  // ── PATCH ──────────────────────────────────────────────────────────────────
   if (req.method === 'PATCH') {
     try {
       const body = req.body || {};
@@ -116,17 +116,22 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Nome, e-mail e telefone sao obrigatorios' });
       }
 
+      // Aposentado só aceita Sim ou Não
+      if (body.aposentado && !['Sim', 'Não'].includes(body.aposentado)) {
+        return res.status(400).json({ error: 'Valor invalido para Aposentado' });
+      }
+
       const rowIndex = await findRowIndex();
       if (!rowIndex) return res.status(404).json({ error: 'Associado nao encontrado' });
 
-      // Lê valores atuais para registrar no histórico
+      // Lê linha atual para usar como fallback no histórico
       const current = await sheets.spreadsheets.values.get({
         spreadsheetId: SHEET_ID,
         range: `${MAIN_TAB}!A${rowIndex}:BL${rowIndex}`,
       });
       const row = (current.data.values || [[]])[0] || [];
 
-      // Monta atualizações célula por célula
+      // Monta atualizações célula a célula
       const updates = [];
       for (const [field, { col }] of Object.entries(EDITABLE)) {
         const val = (body[field] || '').trim();
@@ -145,37 +150,34 @@ export default async function handler(req, res) {
       // Salva na planilha principal
       await sheets.spreadsheets.values.batchUpdate({
         spreadsheetId: SHEET_ID,
-        requestBody: {
-          valueInputOption: 'RAW',
-          data: updates,
-        },
+        requestBody: { valueInputOption: 'RAW', data: updates },
       });
 
-      // Registra no Histórico
-      // Cabeçalho: Data/Hora | CPF | Nome | Logradouro | Número | Complemento
-      //            | Bairro | Cidade | CEP | UF | Email | Telefone | Alterado por
+      // Registra no Historico
+      // Colunas A-N: Data/Hora | CPF | Nome | Aposentado | Logradouro | Número
+      //              | Complemento | Bairro | Cidade | CEP | UF | Email | Telefone | Alterado por
       const ts = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-      const nome = (body.nome || row[1] || '').trim();
 
       const histRow = [
         ts,
-        (row[2] || '').trim(),                        // CPF
-        nome,                                          // Nome
-        (body.logradouro  || row[15] || '').trim(),   // Logradouro
-        (body.numero      || row[16] || '').trim(),   // Número
-        (body.complemento || row[17] || '').trim(),   // Complemento
-        (body.bairro      || row[18] || '').trim(),   // Bairro
-        (body.cidade      || row[19] || '').trim(),   // Cidade
-        (body.cep         || row[20] || '').trim(),   // CEP
-        (body.uf          || row[21] || '').trim(),   // UF
-        (body.email       || row[10] || '').trim(),   // Email
-        (body.telefone    || row[12] || '').trim(),   // Telefone
-        nome,                                          // Alterado por
+        (row[2]  || '').trim(),                        // CPF
+        (body.nome        || row[1]  || '').trim(),    // Nome
+        (body.aposentado  || row[24] || '').trim(),    // Aposentado
+        (body.logradouro  || row[15] || '').trim(),    // Logradouro
+        (body.numero      || row[16] || '').trim(),    // Número
+        (body.complemento || row[17] || '').trim(),    // Complemento
+        (body.bairro      || row[18] || '').trim(),    // Bairro
+        (body.cidade      || row[19] || '').trim(),    // Cidade
+        (body.cep         || row[20] || '').trim(),    // CEP
+        (body.uf          || row[21] || '').trim(),    // UF
+        (body.email       || row[10] || '').trim(),    // Email
+        (body.telefone    || row[12] || '').trim(),    // Telefone
+        (body.nome        || row[1]  || '').trim(),    // Alterado por
       ];
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: SHEET_ID,
-        range: `${HIST_TAB}!A:M`,
+        range: `${HIST_TAB}!A:N`,
         valueInputOption: 'RAW',
         insertDataOption: 'INSERT_ROWS',
         requestBody: { values: [histRow] },
