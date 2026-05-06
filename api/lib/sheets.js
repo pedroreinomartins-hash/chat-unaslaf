@@ -1,5 +1,4 @@
 // api/lib/sheets.js
-// Utilitário para leitura e escrita na planilha de associados via Google Sheets API
 
 import { google } from 'googleapis';
 
@@ -19,50 +18,60 @@ const MAIN_TAB = 'consolidado_app';
 const HIST_TAB = 'Histórico';
 
 /**
- * Colunas da planilha consolidado_app (índice 0-based):
- * A(0):SIAPE | B(1):Nome | C(2):CPF | D(3):Data Nascimento | E(4):Sexo
- * F(5):Escolaridade | G(6):Valor Mensalidade | H(7):Situação Cadastro
- * I(8):Comando | J(9):Modo Pagamento | K(10):Email Principal
- * L(11):Emails Adicionais | M(12):Telefone 1 | N(13):Telefone 2 | O(14):Telefone 3
- * P(15):Logradouro | Q(16):Número | R(17):Complemento | S(18):Bairro
- * T(19):Cidade | U(20):CEP | V(21):UF | W(22):Situação Funcional
- * X(23):Ativo | Y(24):Aposentado | ... | AH(33):Órgão | ...
- * AN(39):Carreira | AO(40):Categoria Funcional | ...
+ * Mapeamento real de colunas (índice 0-based), planilha consolidado_app:
+ * [00] SIAPE            [01] Nome              [02] CPF
+ * [03] Data Nascimento  [04] Sexo              [05] Escolaridade
+ * [06] Valor Mensalidade[07] Situação Cadastro [08] Comando
+ * [09] Modo Pagamento   [10] Email Principal   [11] Emails Adicionais
+ * [12] Telefone 1       [13] Telefone 2        [14] Telefone 3
+ * [15] Logradouro       [16] Número            [17] Complemento
+ * [18] Bairro           [19] Cidade            [20] CEP
+ * [21] UF               [22] Situação Funcional[23] Ativo
+ * [24] Aposentado       [30] Situação Servidor [33] Órgão
+ * [43] Carreira         [44] Categoria Funcional
  */
 
-/**
- * Busca associado pelo CPF (apenas dígitos)
- */
+function cleanCPF(v) {
+  return (v || '').replace(/\D/g, '');
+}
+
 export async function findByCPF(cpf) {
   const sheets = getSheetsClient();
-  const cpfClean = cpf.replace(/\D/g, '');
+  const cpfClean = cleanCPF(cpf);
 
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SHEET_ID,
-    range: `${MAIN_TAB}!A:AQ`,
+    range: `${MAIN_TAB}!A:BL`,   // BL = coluna 64, cobre toda a planilha
   });
 
   const rows = res.data.values || [];
 
-  for (let i = 0; i < rows.length; i++) {
+  // Linha 0 é o cabeçalho — pula
+  for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
-    const rowCPF = (row[2] || '').replace(/\D/g, '');
-    if (rowCPF === cpfClean) {
+    if (!row || row.length < 3) continue;
+    if (cleanCPF(row[2]) === cpfClean) {
       return {
-        rowIndex: i + 1,
-        siape:     row[0]  || '',
-        nome:      row[1]  || '',
-        cpf:       row[2]  || '',
-        email:     row[10] || '',
-        telefone:  row[12] || '',
-        endereco:  [row[15], row[16], row[17]].filter(Boolean).join(', '),
-        cidade:    row[19] || '',
-        uf:        row[21] || '',
-        situacao:  row[22] || '',   // Situação Funcional
-        tipo:      row[23] === 'Sim' ? 'Ativo' : (row[24] === 'Sim' ? 'Aposentado' : ''),
-        orgao:     row[33] || '',
-        cargo:     row[40] || '',
-        situacaoCadastro: row[7] || '',
+        rowIndex:  i + 1,           // 1-based (Sheets API)
+        siape:     (row[0]  || '').trim(),
+        nome:      (row[1]  || '').trim(),
+        cpf:       (row[2]  || '').trim(),
+        email:     (row[10] || '').trim(),
+        telefone:  (row[12] || '').trim(),
+        logradouro:(row[15] || '').trim(),
+        numero:    (row[16] || '').trim(),
+        complemento:(row[17]|| '').trim(),
+        bairro:    (row[18] || '').trim(),
+        cidade:    (row[19] || '').trim(),
+        cep:       (row[20] || '').trim(),
+        uf:        (row[21] || '').trim(),
+        situacao:  (row[22] || '').trim(),   // Situação Funcional
+        tipo:      (row[23] === 'Sim') ? 'Ativo' : ((row[24] === 'Sim') ? 'Aposentado' : ''),
+        situacaoServidor: (row[30] || '').trim(),
+        orgao:     (row[33] || '').trim(),
+        carreira:  (row[43] || '').trim(),
+        cargo:     (row[44] || '').trim(),   // Categoria Funcional
+        situacaoCadastro: (row[7] || '').trim(),
       };
     }
   }
@@ -70,21 +79,16 @@ export async function findByCPF(cpf) {
   return null;
 }
 
-/**
- * Atualiza dados editáveis do associado (merge inteligente — campo vazio não sobrescreve)
- */
 export async function updateAssociado(rowIndex, updates, alteradoPor = 'usuário') {
   const sheets = getSheetsClient();
 
-  // Lê linha atual
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SHEET_ID,
-    range: `${MAIN_TAB}!A${rowIndex}:AQ${rowIndex}`,
+    range: `${MAIN_TAB}!A${rowIndex}:BL${rowIndex}`,
   });
   const current = (res.data.values || [[]])[0] || [];
-  while (current.length < 43) current.push('');
+  while (current.length < 64) current.push('');
 
-  // Aplica somente os campos não-vazios
   if (updates.nome     && updates.nome.trim())     current[1]  = updates.nome.trim();
   if (updates.email    && updates.email.trim())    current[10] = updates.email.trim();
   if (updates.telefone && updates.telefone.trim()) current[12] = updates.telefone.trim();
@@ -93,7 +97,7 @@ export async function updateAssociado(rowIndex, updates, alteradoPor = 'usuário
 
   await sheets.spreadsheets.values.update({
     spreadsheetId: SHEET_ID,
-    range: `${MAIN_TAB}!A${rowIndex}:AQ${rowIndex}`,
+    range: `${MAIN_TAB}!A${rowIndex}:BL${rowIndex}`,
     valueInputOption: 'RAW',
     requestBody: { values: [current] },
   });
@@ -108,7 +112,6 @@ async function appendHistory(rowIndex, updates, alteradoPor) {
     .filter(([, v]) => v)
     .map(([k, v]) => `${k}=${v}`)
     .join('; ');
-
   try {
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
@@ -117,7 +120,5 @@ async function appendHistory(rowIndex, updates, alteradoPor) {
       insertDataOption: 'INSERT_ROWS',
       requestBody: { values: [[ts, rowIndex, alteradoPor, fields, 'atualização cadastro']] },
     });
-  } catch {
-    // Aba histórico pode não existir ainda
-  }
+  } catch { /* aba histórico pode não existir */ }
 }
