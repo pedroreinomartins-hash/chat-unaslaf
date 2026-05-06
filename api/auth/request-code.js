@@ -1,6 +1,7 @@
 // api/auth/request-code.js
 
 import { google } from 'googleapis';
+import { generateSessionToken } from '../lib/token.js';
 
 const SHEET_ID = '1M9H-RikQ-2ATA7MX8maOydbmzx7a1x2pu0sz6r9OJ4M';
 const MAIN_TAB = 'consolidado_app';
@@ -14,13 +15,6 @@ function getSheetsClient() {
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
   return google.sheets({ version: 'v4', auth });
-}
-
-// Gera token de sessão diretamente aqui — sem depender de verify-code.js
-function generateSessionToken(cpf) {
-  const secret = process.env.SESSION_SECRET || 'unaslaf-2026';
-  const payload = `${cpf}|${Date.now()}|${secret}`;
-  return Buffer.from(payload).toString('base64url');
 }
 
 export default async function handler(req, res) {
@@ -40,7 +34,7 @@ export default async function handler(req, res) {
 
     const sheets = getSheetsClient();
 
-    // Busca só colunas A, B, C para localizar a linha
+    // Busca CPF nas colunas A:C
     const searchResult = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
       range: `${MAIN_TAB}!A:C`,
@@ -52,7 +46,7 @@ export default async function handler(req, res) {
     for (let i = 1; i < allRows.length; i++) {
       const rowCPF = (allRows[i][2] || '').replace(/\D/g, '');
       if (rowCPF === cpfClean) {
-        rowIndex = i + 1; // 1-based
+        rowIndex = i + 1;
         break;
       }
     }
@@ -64,7 +58,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Busca dados completos da linha encontrada
+    // Busca dados completos da linha
     const lineResult = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
       range: `${MAIN_TAB}!A${rowIndex}:BL${rowIndex}`,
@@ -93,7 +87,7 @@ export default async function handler(req, res) {
     });
 
   } catch (err) {
-    console.error('[request-code] ERRO:', err.message);
+    console.error('[request-code]', err.message);
     return res.status(500).json({ error: 'Erro interno', detail: err.message });
   }
 }
