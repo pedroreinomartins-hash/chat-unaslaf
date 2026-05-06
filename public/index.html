@@ -834,13 +834,39 @@ function renderDocs() {
       <div class="doc-name">${f.name}</div>
       <div><span class="doc-cat">${f.category}</span></div>
       <div class="doc-meta">${fmtFileSize(f.size)}</div>
-      <a class="btn-download" href="${f.downloadUrl}" target="_blank">⬇ Baixar</a>
+      <button class="btn-download" onclick="downloadDoc('${f.downloadUrl}', '${f.name}')">⬇ Baixar</button>
     </div>
   `).join('');
 }
 
 $('docs-search').addEventListener('input', renderDocs);
 $('docs-filter').addEventListener('change', renderDocs);
+
+// ════════════════════════════════════════════════════════════════════════
+// DOWNLOAD DE DOCUMENTOS (com token de autenticação)
+// ════════════════════════════════════════════════════════════════════════
+async function downloadDoc(url, filename) {
+  try {
+    const res = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + (state.token || '') }
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert('Erro ao baixar: ' + (err.error || res.status));
+      return;
+    }
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch (err) {
+    alert('Erro ao baixar o arquivo. Tente novamente.');
+    console.error('[download]', err);
+  }
+}
+
 </script>
 </body>
 </html>
