@@ -688,6 +688,14 @@ function buildCadastroForm(ass) {
       <input id="f-nome" value="${ass.nome || ''}" placeholder="Nome completo" />
     </div>
     <div class="field-row">
+      <label>Aposentado</label>
+      <select id="f-aposentado" style="padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);background:white;">
+        <option value="" ${!ass.aposentado ? 'selected' : ''}>Não informado</option>
+        <option value="Sim" ${ass.aposentado === 'Sim' ? 'selected' : ''}>Sim</option>
+        <option value="Não" ${ass.aposentado === 'Não' ? 'selected' : ''}>Não</option>
+      </select>
+    </div>
+    <div class="field-row">
       <label>E-mail *</label>
       <input id="f-email" type="email" value="${ass.email || ''}" placeholder="email@exemplo.com" />
     </div>
@@ -762,6 +770,7 @@ $('btn-save').addEventListener('click', async () => {
       method: 'PATCH',
       body: JSON.stringify({
         nome:        $('f-nome')?.value.trim(),
+        aposentado:  $('f-aposentado')?.value,
         email:       $('f-email')?.value.trim(),
         telefone:    $('f-telefone')?.value.trim(),
         logradouro:  $('f-logradouro')?.value.trim(),
