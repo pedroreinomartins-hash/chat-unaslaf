@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNASLAF — App do Associado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ─────────────────────────────────────────────────────────── */
+    :root {
+      --green:       #1E7C4D;
+      --green-light: #2EA265;
+      --green-pale:  #E8F5EE;
+      --green-glow:  rgba(30,124,77,.15);
+      --dark:        #0D1F16;
+      --mid:         #1A3326;
+      --text:        #1C2E24;
+      --muted:       #6B8C78;
+      --border:      #D4E8DC;
+      --bg:          #F7FAF8;
+      --white:       #FFFFFF;
+      --danger:      #C0392B;
+      --warn-bg:     #FFF8E1;
+      --warn-border: #F9A825;
+      --radius:      14px;
+      --shadow:      0 4px 24px rgba(0,0,0,.08);
+      --shadow-lg:   0 12px 48px rgba(0,0,0,.12);
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text); }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+    input, textarea, select { font-family: inherit; outline: none; }
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Scrollbar ──────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+    /* ── Layout wrapper ─────────────────────────────────────────────────── */
+    #app { min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── TELA DE LOGIN ──────────────────────────────────────────────────── */
+    #screen-login {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--mid) 60%, #0a2e1a 100%);
+      padding: 24px;
+      position: relative; overflow: hidden;
+    }
+    #screen-login::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 70% 30%, rgba(46,162,101,.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .login-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%; max-width: 420px;
+      box-shadow: var(--shadow-lg);
+      position: relative; z-index: 1;
+      animation: fadeUp .5s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(24px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .login-logo {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 32px;
+    }
+    .login-logo-mark {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--green), var(--green-light));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 18px; letter-spacing: -1px;
+    }
+    .login-logo-text { line-height: 1.1; }
+    .login-logo-text strong { display: block; font-size: 18px; font-weight: 700; color: var(--dark); }
+    .login-logo-text span { font-size: 11px; color: var(--muted); font-weight: 400; }
+    .login-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; color: var(--dark); }
+    .login-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; letter-spacing: .5px; text-transform: uppercase; }
+    .field input {
+      width: 100%; padding: 13px 16px;
+      border: 1.5px solid var(--border); border-radius: var(--radius);
+      font-size: 15px; color: var(--text);
+      transition: border .2s, box-shadow .2s;
+    }
+    .field input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); }
+    .field input.error { border-color: var(--danger); }
+    .btn-primary {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--green), var(--green-light));
+      color: white; font-size: 15px; font-weight: 600;
+      border-radius: var(--radius); transition: opacity .2s, transform .1s;
+      margin-top: 4px;
+    }
+    .btn-primary:hover { opacity: .9; }
+    .btn-primary:active { transform: scale(.98); }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .login-error {
+      background: #fdecea; color: var(--danger);
+      border-radius: 10px; padding: 12px 14px;
+      font-size: 13px; line-height: 1.5; margin-bottom: 16px;
+      display: none;
+    }
+    .login-error.show { display: block; }
+    .login-security {
+      text-align: center; font-size: 11px; color: var(--muted);
+      margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+    .code-info {
+      background: var(--green-pale); border-radius: 10px;
+      padding: 12px 14px; font-size: 13px; color: var(--green);
+      margin-bottom: 16px; line-height: 1.5; display: none;
+    }
+    .code-info.show { display: block; }
+    .step { display: none; }
+    .step.active { display: block; }
+
+    /* ── APP SHELL (pós-login) ───────────────────────────────────────────── */
+    #screen-app { display: none; flex-direction: column; min-height: 100vh; }
+    #screen-app.show { display: flex; }
+
+    /* Topbar */
+    .topbar {
+      background: var(--dark);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 56px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.3);
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; }
+    .topbar-logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--green), var(--green-light));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; color: white;
+    }
+    .topbar-name { font-size: 14px; font-weight: 600; color: white; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .user-badge {
+      font-size: 12px; color: rgba(255,255,255,.6);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;
+    }
+    .btn-logout {
+      background: rgba(255,255,255,.1); color: rgba(255,255,255,.8);
+      font-size: 12px; font-weight: 500; padding: 6px 12px;
+      border-radius: 8px; transition: background .2s;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,.2); }
+
+    /* Navigation */
+    .navbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex; overflow-x: auto;
+      padding: 0 16px;
+    }
+    .nav-btn {
+      padding: 0 20px; height: 46px;
+      font-size: 13px; font-weight: 500; color: var(--muted);
+      background: none; white-space: nowrap;
+      border-bottom: 2.5px solid transparent;
+      transition: color .2s, border-color .2s;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .nav-btn.active { color: var(--green); border-bottom-color: var(--green); }
+    .nav-btn:hover:not(.active) { color: var(--text); }
+    .nav-icon { font-size: 16px; }
+
+    /* Content area */
+    .content { flex: 1; padding: 24px; max-width: 900px; margin: 0 auto; width: 100%; }
+
+    /* Panels */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── CHAT PANEL ─────────────────────────────────────────────────────── */
+    .chat-wrapper {
+      display: flex; flex-direction: column;
+      height: calc(100vh - 56px - 46px - 48px);
+      min-height: 400px;
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .chat-disclaimer {
+      background: var(--warn-bg); border-bottom: 1px solid var(--warn-border);
+      padding: 10px 16px; font-size: 11.5px; color: #7a6000;
+      display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
+    }
+    .chat-disclaimer span:first-child { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 20px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .msg {
+      max-width: 78%; display: flex; flex-direction: column; gap: 4px;
+      animation: msgIn .25s ease;
+    }
+    @keyframes msgIn {
+      from { opacity:0; transform: translateY(8px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .msg.user { align-self: flex-end; align-items: flex-end; }
+    .msg.ai   { align-self: flex-start; align-items: flex-start; }
+    .msg-bubble {
+      padding: 11px 15px; border-radius: 14px;
+      font-size: 14px; line-height: 1.6; word-break: break-word;
+    }
+    .msg.user .msg-bubble { background: var(--green); color: white; border-bottom-right-radius: 4px; }
+    .msg.ai   .msg-bubble { background: var(--bg); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; }
+    .msg-bubble p { margin: 0 0 8px; }
+    .msg-bubble p:last-child { margin-bottom: 0; }
+    .msg-label { font-size: 11px; color: var(--muted); padding: 0 4px; }
+    .chat-chips {
+      display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .chip {
+      background: var(--green-pale); color: var(--green);
+      border: 1px solid #b6dfca; border-radius: 99px;
+      font-size: 12px; font-weight: 500; padding: 5px 13px;
+      transition: background .2s, color .2s;
+    }
+    .chip:hover { background: var(--green); color: white; }
+    .chat-input-bar {
+      display: flex; gap: 10px; padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--white);
+    }
+    .chat-input {
+      flex: 1; padding: 11px 15px;
+      border: 1.5px solid var(--border); border-radius: 99px;
+      font-size: 14px; color: var(--text);
+      transition: border .2s, box-shadow .2s;
+    }
+    .chat-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); }
+    .btn-send {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: var(--green); color: white; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity .2s, transform .1s; flex-shrink: 0;
+    }
+    .btn-send:hover { opacity: .85; }
+    .btn-send:active { transform: scale(.93); }
+    .btn-send:disabled { opacity: .4; cursor: not-allowed; }
+    .typing-bubble { display: flex; gap: 4px; padding: 13px 16px; }
+    .typing-bubble span {
+      width: 7px; height: 7px; background: var(--muted);
+      border-radius: 50%; animation: bounce 1s infinite;
+    }
+    .typing-bubble span:nth-child(2) { animation-delay: .15s; }
+    .typing-bubble span:nth-child(3) { animation-delay: .3s; }
+    @keyframes bounce {
+      0%,80%,100% { transform: scale(.7); opacity:.4; }
+      40%          { transform: scale(1);  opacity:1; }
+    }
+
+    /* ── CADASTRO PANEL ─────────────────────────────────────────────────── */
+    .card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 28px 32px;
+    }
+    .card-title { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .card-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-grid .span2 { grid-column: span 2; }
+    @media (max-width: 600px) { .form-grid .span2 { grid-column: span 1; } }
+    .field-row { display: flex; flex-direction: column; gap: 6px; }
+    .field-row label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; }
+    .field-row input {
+      padding: 11px 14px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 14px; color: var(--text);
+      transition: border .2s, box-shadow .2s;
+    }
+    .field-row input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); }
+    .field-row input:disabled { background: var(--bg); color: var(--muted); cursor: not-allowed; }
+    .field-row input.empty-required { border-color: var(--danger); background: #fff5f5; }
+    .readonly-badge {
+      display: inline-block; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 2px 7px; font-size: 11px; color: var(--muted);
+      margin-left: 6px; text-transform: none; letter-spacing: 0;
+    }
+    .btn-save {
+      padding: 13px 28px; background: linear-gradient(135deg, var(--green), var(--green-light));
+      color: white; font-size: 14px; font-weight: 600; border-radius: var(--radius);
+      transition: opacity .2s; margin-top: 8px;
+    }
+    .btn-save:disabled { opacity: .45; cursor: not-allowed; }
+    .save-msg {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; margin-left: 16px; margin-top: 8px;
+    }
+    .save-msg.ok  { color: var(--green); }
+    .save-msg.err { color: var(--danger); }
+
+    /* ── DOCUMENTOS PANEL ───────────────────────────────────────────────── */
+    .docs-toolbar {
+      display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .docs-search {
+      flex: 1; min-width: 180px; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: var(--radius);
+      font-size: 14px; color: var(--text); background: var(--white);
+      transition: border .2s;
+    }
+    .docs-search:focus { border-color: var(--green); }
+    .docs-filter {
+      padding: 10px 14px; border: 1.5px solid var(--border);
+      border-radius: var(--radius); font-size: 13px; background: var(--white);
+      color: var(--text);
+    }
+    .docs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 14px; }
+    .doc-card {
+      background: var(--white); border-radius: var(--radius);
+      border: 1.5px solid var(--border); padding: 18px;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .doc-card:hover { border-color: var(--green); box-shadow: 0 4px 16px var(--green-glow); }
+    .doc-icon { font-size: 28px; }
+    .doc-name { font-size: 13px; font-weight: 600; color: var(--dark); line-height: 1.4; }
+    .doc-meta { font-size: 11px; color: var(--muted); }
+    .doc-cat {
+      display: inline-block; background: var(--green-pale); color: var(--green);
+      border-radius: 99px; font-size: 11px; font-weight: 500; padding: 3px 10px;
+    }
+    .btn-download {
+      margin-top: auto; padding: 8px 0; background: var(--green-pale);
+      color: var(--green); font-size: 13px; font-weight: 600;
+      border-radius: 8px; text-align: center; width: 100%;
+      transition: background .2s, color .2s;
+    }
+    .btn-download:hover { background: var(--green); color: white; }
+    .empty-state {
+      text-align: center; padding: 48px; color: var(--muted);
+      font-size: 14px;
+    }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+    /* ── Loader ─────────────────────────────────────────────────────────── */
+    .loader {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.3);
+      border-top-color: white; border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .loader.dark { border-color: var(--border); border-top-color: var(--green); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-overlay {
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px; gap: 10px; color: var(--muted); font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ═══════════════════════════ LOGIN ═══════════════════════════════════ -->
+  <div id="screen-login">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="login-logo-mark">UN</div>
+        <div class="login-logo-text">
+          <strong>UNASLAF</strong>
+          <span>App do Associado</span>
+        </div>
+      </div>
+
+      <!-- Login por CPF direto -->
+      <div id="step-cpf" class="step active">
+        <div class="login-title">Acesso do Associado</div>
+        <div class="login-subtitle">Informe seu CPF cadastrado para acessar o sistema.</div>
+        <div id="login-error" class="login-error"></div>
+        <div class="field">
+          <label>CPF</label>
+          <input id="input-cpf" type="text" placeholder="000.000.000-00" maxlength="14" autocomplete="off" />
+        </div>
+        <button id="btn-cpf" class="btn-primary">Entrar</button>
+        <div class="login-security">🔒 Seus dados são protegidos e criptografados</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ APP ════════════════════════════════════ -->
+  <div id="screen-app">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-brand">
+        <div class="topbar-logo">UN</div>
+        <div class="topbar-name">UNASLAF</div>
+      </div>
+      <div class="topbar-right">
+        <div class="user-badge" id="user-badge"></div>
+        <button class="btn-logout" id="btn-logout">Sair</button>
+      </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <button class="nav-btn active" data-panel="chat">
+        <span class="nav-icon">💬</span> Atendimento
+      </button>
+      <button class="nav-btn" data-panel="cadastro">
+        <span class="nav-icon">👤</span> Meu Cadastro
+      </button>
+      <button class="nav-btn" data-panel="documentos">
+        <span class="nav-icon">📄</span> Documentos
+      </button>
+    </nav>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ─── CHAT ──────────────────────────────────────────────────── -->
+      <div id="panel-chat" class="panel active">
+        <div class="chat-wrapper">
+          <div class="chat-disclaimer">
+            <span>⚠️</span>
+            <span>As informações geradas por inteligência artificial têm caráter <strong>orientativo e não oficial</strong>. Não substituem canais oficiais, assessoria jurídica ou autoridades competentes.</span>
+          </div>
+          <div class="chat-messages" id="chat-messages"></div>
+          <div class="chat-chips" id="chat-chips">
+            <button class="chip" data-q="O que é a UNASLAF?">O que é a UNASLAF?</button>
+            <button class="chip" data-q="Quais são as ações coletivas?">Ações coletivas</button>
+            <button class="chip" data-q="O que é a ADI 4151?">ADI 4151</button>
+            <button class="chip" data-q="Como me filiar à UNASLAF?">Como me filiar</button>
+            <button class="chip" data-q="Quais são os meus direitos como associado?">Direitos dos associados</button>
+          </div>
+          <div class="chat-input-bar">
+            <input class="chat-input" id="chat-input" placeholder="Envie sua dúvida..." />
+            <button class="btn-send" id="btn-send" title="Enviar">➤</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── CADASTRO ──────────────────────────────────────────────── -->
+      <div id="panel-cadastro" class="panel">
+        <div class="card">
+          <div class="card-title">Meu Cadastro</div>
+          <div class="card-subtitle">Mantenha seus dados atualizados. CPF e SIAPE são somente leitura.</div>
+          <div class="form-grid" id="cadastro-form">
+            <div class="loading-overlay span2" id="cadastro-loading">
+              <div class="loader dark"></div> Carregando dados...
+            </div>
+          </div>
+          <div style="margin-top:20px;display:none" id="cadastro-actions">
+            <button class="btn-save" id="btn-save" disabled>Salvar Cadastro</button>
+            <span class="save-msg" id="save-msg"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── DOCUMENTOS ────────────────────────────────────────────── -->
+      <div id="panel-documentos" class="panel">
+        <div class="docs-toolbar">
+          <input class="docs-search" id="docs-search" placeholder="🔍  Buscar documentos..." />
+          <select class="docs-filter" id="docs-filter">
+            <option value="">Todas as categorias</option>
+            <option>Filiação</option>
+            <option>Desfiliação</option>
+            <option>Procuração</option>
+            <option>Requerimentos</option>
+            <option>Formulários</option>
+            <option>Geral</option>
+          </select>
+        </div>
+        <div id="docs-grid" class="docs-grid">
+          <div class="loading-overlay" style="grid-column:1/-1">
+            <div class="loader dark"></div> Carregando documentos...
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /screen-app -->
+
+</div><!-- /app -->
+
+<script>
+// ════════════════════════════════════════════════════════════════════════
+// Estado da sessão
+// ════════════════════════════════════════════════════════════════════════
+const state = {
+  token: null,
+  associado: null,
+  chatHistory: [],
+  cpfTemp: '',
+};
+
+// ════════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+
+function formatCPF(v) {
+  return v.replace(/\D/g,'').replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+}
+
+function fmtFileSize(bytes) {
+  if (!bytes) return '';
+  const n = Number(bytes);
+  if (n < 1024) return n + ' B';
+  if (n < 1024*1024) return (n/1024).toFixed(1) + ' KB';
+  return (n/(1024*1024)).toFixed(1) + ' MB';
+}
+
+function docIcon(mimeType) {
+  if (!mimeType) return '📄';
+  if (mimeType.includes('pdf')) return '📕';
+  if (mimeType.includes('word') || mimeType.includes('document')) return '📘';
+  if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) return '📗';
+  if (mimeType.includes('image')) return '🖼️';
+  return '📄';
+}
+
+async function api(path, options = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
+  const res = await fetch(path, { ...options, headers: { ...headers, ...(options.headers || {}) } });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw Object.assign(new Error(json.error || 'Erro'), { detail: json.message || json.detail || '' });
+  return json;
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// LOGIN — CPF direto (sem OTP)
+// ════════════════════════════════════════════════════════════════════════
+$('input-cpf').addEventListener('input', e => {
+  const raw = e.target.value.replace(/\D/g,'');
+  e.target.value = raw.replace(/(\d{3})(\d{3})?(\d{3})?(\d{2})?/,
+    (_,a,b,c,d) => [a,b,c].filter(Boolean).join('.') + (d ? '-'+d : ''));
+});
+
+$('input-cpf').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-cpf').click(); });
+
+$('btn-cpf').addEventListener('click', async () => {
+  const cpf = $('input-cpf').value;
+  const cpfClean = cpf.replace(/\D/g,'');
+  const errEl = $('login-error');
+  errEl.classList.remove('show');
+
+  if (cpfClean.length !== 11) {
+    errEl.textContent = 'Informe um CPF válido com 11 dígitos.';
+    errEl.classList.add('show'); return;
+  }
+
+  const btn = $('btn-cpf');
+  btn.innerHTML = '<span class="loader"></span>';
+  btn.disabled = true;
+
+  try {
+    const data = await api('/api/auth/request-code', {
+      method: 'POST',
+      body: JSON.stringify({ cpf: cpfClean }),
+    });
+    state.token = data.token;
+    state.associado = data.associado;
+    enterApp();
+  } catch (err) {
+    errEl.textContent = err.detail || err.message;
+    errEl.classList.add('show');
+  } finally {
+    btn.innerHTML = 'Entrar';
+    btn.disabled = false;
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// Entrar no app
+// ════════════════════════════════════════════════════════════════════════
+function enterApp() {
+  $('screen-login').style.display = 'none';
+  $('screen-app').classList.add('show');
+  $('user-badge').textContent = state.associado.nome.split(' ').slice(0,2).join(' ');
+
+  // Mensagem de boas-vindas no chat
+  appendMsg('ai', `Olá, <strong>${state.associado.nome.split(' ')[0]}</strong>! 👋\n\nSou o atendente virtual da UNASLAF. Como posso ajudar você hoje?\n\nVocê pode usar os atalhos abaixo ou me fazer qualquer dúvida sobre a UNASLAF, ações coletivas, ADI 4151, filiação e muito mais.`);
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// NAVEGAÇÃO
+// ════════════════════════════════════════════════════════════════════════
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    $('panel-' + btn.dataset.panel).classList.add('active');
+    if (btn.dataset.panel === 'cadastro') loadCadastro();
+    if (btn.dataset.panel === 'documentos') loadDocumentos();
+  });
+});
+
+$('btn-logout').addEventListener('click', () => {
+  state.token = null; state.associado = null;
+  $('screen-app').classList.remove('show');
+  $('screen-login').style.display = '';
+  $('input-cpf').value = '';
+  $('chat-messages').innerHTML = '';
+  state.chatHistory = [];
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// CHAT
+// ════════════════════════════════════════════════════════════════════════
+function appendMsg(role, html, isTyping = false) {
+  const msgs = $('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
+  if (isTyping) div.id = 'typing-indicator';
+  div.innerHTML = `
+    <div class="msg-label">${role === 'user' ? 'Você' : 'Atendente UNASLAF'}</div>
+    <div class="msg-bubble">${isTyping
+      ? '<div class="typing-bubble"><span></span><span></span><span></span></div>'
+      : html.replace(/\n/g,'<br>') }
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+async function sendChat(text) {
+  if (!text.trim()) return;
+  appendMsg('user', text);
+  state.chatHistory.push({ role: 'user', content: text });
+
+  const inputEl = $('chat-input');
+  const sendBtn = $('btn-send');
+  inputEl.value = '';
+  sendBtn.disabled = true;
+  $('chat-chips').style.display = 'none';
+
+  appendMsg('ai', '', true); // typing
+
+  try {
+    const data = await api('/api/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message: text, history: state.chatHistory }),
+    });
+    $('typing-indicator')?.remove();
+    appendMsg('ai', data.reply);
+    state.chatHistory.push({ role: 'assistant', content: data.reply });
+  } catch (err) {
+    $('typing-indicator')?.remove();
+    appendMsg('ai', '⚠️ Não consegui processar sua mensagem. Por favor, tente novamente.');
+  } finally {
+    sendBtn.disabled = false;
+    inputEl.focus();
+  }
+}
+
+$('btn-send').addEventListener('click', () => sendChat($('chat-input').value));
+$('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(e.target.value); });
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => sendChat(chip.dataset.q));
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// CADASTRO
+// ════════════════════════════════════════════════════════════════════════
+let cadastroLoaded = false;
+
+function buildCadastroForm(ass) {
+  const grid = $('cadastro-form');
+  grid.innerHTML = `
+    <div class="field-row">
+      <label>CPF <span class="readonly-badge">somente leitura</span></label>
+      <input value="${ass.cpf || ''}" disabled />
+    </div>
+    <div class="field-row">
+      <label>SIAPE <span class="readonly-badge">somente leitura</span></label>
+      <input value="${ass.siape || ''}" disabled />
+    </div>
+    <div class="field-row span2">
+      <label>Nome completo *</label>
+      <input id="f-nome" value="${ass.nome || ''}" placeholder="Nome completo" />
+    </div>
+    <div class="field-row">
+      <label>E-mail *</label>
+      <input id="f-email" type="email" value="${ass.email || ''}" placeholder="email@exemplo.com" />
+    </div>
+    <div class="field-row">
+      <label>WhatsApp *</label>
+      <input id="f-telefone" value="${ass.telefone || ''}" placeholder="55DDD9XXXXXXXX" />
+    </div>
+    <div class="field-row span2">
+      <label>Endereço</label>
+      <input id="f-endereco" value="${ass.endereco || ''}" placeholder="Rua, número, complemento" />
+    </div>
+    <div class="field-row">
+      <label>Cidade</label>
+      <input id="f-cidade" value="${ass.cidade || ''}" placeholder="Cidade" />
+    </div>
+    <div class="field-row">
+      <label>UF</label>
+      <input id="f-uf" value="${ass.uf || ''}" placeholder="SP" maxlength="2" />
+    </div>
+  `;
+  $('cadastro-actions').style.display = '';
+  $('btn-save').disabled = false;
+
+  // Validação dos obrigatórios
+  function checkRequired() {
+    const ok = ['f-nome','f-email','f-telefone'].every(id => $(id)?.value.trim());
+    $('btn-save').disabled = !ok;
+    ['f-nome','f-email','f-telefone'].forEach(id => {
+      $(id)?.classList.toggle('empty-required', !$(id)?.value.trim());
+    });
+  }
+  ['f-nome','f-email','f-telefone'].forEach(id => {
+    $(id)?.addEventListener('input', checkRequired);
+  });
+  checkRequired();
+}
+
+async function loadCadastro() {
+  if (cadastroLoaded) return;
+  cadastroLoaded = true;
+  try {
+    const data = await api('/api/cadastro');
+    buildCadastroForm(data.associado);
+  } catch (err) {
+    $('cadastro-form').innerHTML = `<div class="span2" style="color:var(--danger);font-size:13px;">Erro ao carregar dados: ${err.message}</div>`;
+  }
+}
+
+$('btn-save').addEventListener('click', async () => {
+  const btn = $('btn-save');
+  const msg = $('save-msg');
+  btn.disabled = true;
+  msg.textContent = '';
+
+  try {
+    await api('/api/cadastro', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        nome:     $('f-nome')?.value.trim(),
+        email:    $('f-email')?.value.trim(),
+        telefone: $('f-telefone')?.value.trim(),
+        endereco: $('f-endereco')?.value.trim(),
+        cidade:   $('f-cidade')?.value.trim(),
+        uf:       $('f-uf')?.value.trim(),
+      }),
+    });
+    msg.className = 'save-msg ok';
+    msg.textContent = '✓ Salvo com sucesso!';
+    // Atualiza state
+    state.associado = { ...state.associado,
+      nome: $('f-nome')?.value.trim(),
+      email: $('f-email')?.value.trim(),
+    };
+    $('user-badge').textContent = state.associado.nome.split(' ').slice(0,2).join(' ');
+  } catch (err) {
+    msg.className = 'save-msg err';
+    msg.textContent = '✗ Erro: ' + (err.detail || err.message);
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => { msg.textContent = ''; }, 4000);
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// DOCUMENTOS
+// ════════════════════════════════════════════════════════════════════════
+let allDocs = [];
+let docsLoaded = false;
+
+async function loadDocumentos() {
+  if (docsLoaded) return;
+  docsLoaded = true;
+  try {
+    const data = await api('/api/documentos');
+    allDocs = data.files;
+    renderDocs();
+  } catch (err) {
+    $('docs-grid').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Erro ao carregar documentos: ${err.message}</div>`;
+  }
+}
+
+function renderDocs() {
+  const q = $('docs-search').value.toLowerCase();
+  const cat = $('docs-filter').value;
+  const filtered = allDocs.filter(f =>
+    (!q || f.name.toLowerCase().includes(q)) &&
+    (!cat || f.category === cat)
+  );
+  if (!filtered.length) {
+    $('docs-grid').innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📭</div>Nenhum documento encontrado.</div>`;
+    return;
+  }
+  $('docs-grid').innerHTML = filtered.map(f => `
+    <div class="doc-card">
+      <div>${docIcon(f.mimeType)}</div>
+      <div class="doc-name">${f.name}</div>
+      <div><span class="doc-cat">${f.category}</span></div>
+      <div class="doc-meta">${fmtFileSize(f.size)}</div>
+      <a class="btn-download" href="${f.downloadUrl}" target="_blank">⬇ Baixar</a>
+    </div>
+  `).join('');
+}
+
+$('docs-search').addEventListener('input', renderDocs);
+$('docs-filter').addEventListener('change', renderDocs);
+</script>
+</body>
+</html>

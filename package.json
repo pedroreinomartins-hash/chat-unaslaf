@@ -1,0 +1,11 @@
+{
+  "name": "unaslaf-app",
+  "version": "1.0.0",
+  "description": "Atendente Virtual UNASLAF",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "googleapis": "^144.0.0",
+    "node-fetch": "^3.3.2"
+  }
+}
