@@ -1,5 +1,3 @@
-backup context-static
-
 // api/context-static.js
 // Base de Conhecimento da UNASLAF — copiado do arquivo original
 // Para editar: localize o bloco pelo id e edite o campo `content`
