@@ -1,5 +1,3 @@
-backup chat:
-
 // api/chat.js
 // Endpoint do chat de IA com RAG (Retrieval Augmented Generation)
 
