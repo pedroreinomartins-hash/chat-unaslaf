@@ -1,5 +1,4 @@
 // api/auth/request-code.js
-// Versão com logs de diagnóstico
 
 import { google } from 'googleapis';
 
@@ -17,6 +16,13 @@ function getSheetsClient() {
   return google.sheets({ version: 'v4', auth });
 }
 
+// Gera token de sessão diretamente aqui — sem depender de verify-code.js
+function generateSessionToken(cpf) {
+  const secret = process.env.SESSION_SECRET || 'unaslaf-2026';
+  const payload = `${cpf}|${Date.now()}|${secret}`;
+  return Buffer.from(payload).toString('base64url');
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -28,102 +34,66 @@ export default async function handler(req, res) {
     const { cpf } = req.body || {};
     const cpfClean = (cpf || '').replace(/\D/g, '');
 
-    console.log('[request-code] CPF recebido:', cpf, '→ limpo:', cpfClean);
-
     if (!cpfClean || cpfClean.length !== 11) {
-      return res.status(400).json({ error: 'CPF inválido', cpfRecebido: cpf, cpfLimpo: cpfClean });
+      return res.status(400).json({ error: 'CPF inválido' });
     }
 
-    // Lê planilha diretamente (sem importar lib para isolar o problema)
     const sheets = getSheetsClient();
 
-    const result = await sheets.spreadsheets.values.get({
+    // Busca só colunas A, B, C para localizar a linha
+    const searchResult = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: `${MAIN_TAB}!A1:C10`,  // só primeiras 10 linhas, colunas A-C
+      range: `${MAIN_TAB}!A:C`,
     });
 
-    const rows = result.data.values || [];
-    console.log('[request-code] Total linhas retornadas (A:C, primeiras 10):', rows.length);
-    console.log('[request-code] Linha 0 (cabeçalho):', JSON.stringify(rows[0]));
-    console.log('[request-code] Linha 1:', JSON.stringify(rows[1]));
-    console.log('[request-code] Linha 2:', JSON.stringify(rows[2]));
+    const allRows = searchResult.data.values || [];
+    let rowIndex = null;
 
-    // Agora busca em toda a planilha
-    const fullResult = await sheets.spreadsheets.values.get({
-      spreadsheetId: SHEET_ID,
-      range: `${MAIN_TAB}!A:C`,  // só colunas A, B, C (SIAPE, Nome, CPF)
-    });
-
-    const allRows = fullResult.data.values || [];
-    console.log('[request-code] Total linhas na planilha completa:', allRows.length);
-
-    // Busca o CPF
-    let found = null;
     for (let i = 1; i < allRows.length; i++) {
-      const row = allRows[i];
-      const rowCPF = (row[2] || '').replace(/\D/g, '');
+      const rowCPF = (allRows[i][2] || '').replace(/\D/g, '');
       if (rowCPF === cpfClean) {
-        found = { rowIndex: i + 1, siape: row[0], nome: row[1], cpf: row[2] };
+        rowIndex = i + 1; // 1-based
         break;
       }
     }
 
-    console.log('[request-code] Resultado busca:', found ? 'ENCONTRADO' : 'NÃO ENCONTRADO');
-
-    if (!found) {
-      // Mostra primeiros 5 CPFs da planilha para diagnóstico
-      const sample = allRows.slice(1, 6).map(r => ({
-        raw: r[2],
-        limpo: (r[2] || '').replace(/\D/g, ''),
-      }));
-      console.log('[request-code] Amostra de CPFs na planilha:', JSON.stringify(sample));
-
+    if (!rowIndex) {
       return res.status(404).json({
         error: 'CPF não encontrado',
-        message: 'Este CPF não está cadastrado na base de associados da UNASLAF.',
-        debug: {
-          cpfBuscado: cpfClean,
-          totalLinhas: allRows.length,
-          amostraCPFs: sample,
-        },
+        message: 'Este CPF não está cadastrado na base de associados da UNASLAF. Entre em contato pelo site unaslaf.org.br.',
       });
     }
 
     // Busca dados completos da linha encontrada
     const lineResult = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: `${MAIN_TAB}!A${found.rowIndex}:BL${found.rowIndex}`,
+      range: `${MAIN_TAB}!A${rowIndex}:BL${rowIndex}`,
     });
     const row = (lineResult.data.values || [[]])[0] || [];
 
-    const { generateSessionToken } = await import('./verify-code.js');
     const token = generateSessionToken(cpfClean);
 
     return res.status(200).json({
       ok: true,
       token,
       associado: {
-        nome:      (row[1]  || '').trim(),
-        cpf:       (row[2]  || '').trim(),
-        siape:     (row[0]  || '').trim(),
-        email:     (row[10] || '').trim(),
-        telefone:  (row[12] || '').trim(),
-        cidade:    (row[19] || '').trim(),
-        uf:        (row[21] || '').trim(),
-        situacao:  (row[22] || '').trim(),
-        tipo:      row[23] === 'Sim' ? 'Ativo' : (row[24] === 'Sim' ? 'Aposentado' : ''),
-        orgao:     (row[33] || '').trim(),
-        cargo:     (row[44] || '').trim(),
-        rowIndex:  found.rowIndex,
+        nome:     (row[1]  || '').trim(),
+        cpf:      (row[2]  || '').trim(),
+        siape:    (row[0]  || '').trim(),
+        email:    (row[10] || '').trim(),
+        telefone: (row[12] || '').trim(),
+        cidade:   (row[19] || '').trim(),
+        uf:       (row[21] || '').trim(),
+        situacao: (row[22] || '').trim(),
+        tipo:     row[23] === 'Sim' ? 'Ativo' : (row[24] === 'Sim' ? 'Aposentado' : ''),
+        orgao:    (row[33] || '').trim(),
+        cargo:    (row[44] || '').trim(),
+        rowIndex,
       },
     });
 
   } catch (err) {
-    console.error('[request-code] ERRO:', err.message, err.stack);
-    return res.status(500).json({
-      error: 'Erro interno',
-      detail: err.message,
-      stack: err.stack,
-    });
+    console.error('[request-code] ERRO:', err.message);
+    return res.status(500).json({ error: 'Erro interno', detail: err.message });
   }
 }
