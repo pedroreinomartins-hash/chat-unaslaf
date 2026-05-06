@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UNASLAF — Atendente Virtual</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23185FA5'/><text x='4' y='24' font-size='20' fill='white' font-family='sans-serif' font-weight='bold'>U</text></svg>" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue: #185FA5;
+  --blue-dark: #0C447C;
+  --blue-light: #E6F1FB;
+  --green-bg: #EAF3DE;
+  --green-text: #3B6D11;
+  --warn-bg: #FAEEDA;
+  --warn-text: #854F0B;
+  --danger-bg: #FCEBEB;
+  --danger-text: #A32D2D;
+  --border: #e2e2e2;
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --surface2: #f0f2f5;
+  --text: #1a1a1a;
+  --text2: #666;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; }
+
+/* ── AUTH ── */
+#auth-screen { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.auth-card { width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+.auth-logo { text-align: center; margin-bottom: 28px; }
+.auth-logo-main { font-size: 28px; font-weight: 700; color: var(--blue); letter-spacing: -1px; }
+.auth-logo-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+.auth-step { display: none; }
+.auth-step.active { display: block; }
+.step-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.step-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
+.flabel { font-size: 12px; color: var(--text2); margin-bottom: 5px; font-weight: 500; }
+.finput { width: 100%; padding: 11px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); font-size: 15px; color: var(--text); font-family: inherit; outline: none; margin-bottom: 14px; transition: border-color .15s; }
+.finput:focus { border-color: var(--blue); background: #fff; }
+.btn-primary { width: 100%; padding: 12px; border-radius: var(--radius-sm); background: var(--blue); color: #fff; border: none; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
+.btn-primary:hover { opacity: .88; }
+.btn-primary:disabled { opacity: .5; cursor: default; }
+.btn-outline { width: 100%; padding: 11px; border-radius: var(--radius-sm); background: transparent; color: var(--blue); border: 1px solid var(--blue); font-size: 14px; font-weight: 600; cursor: pointer; }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.field-err { font-size: 12px; color: var(--danger-text); margin-top: -10px; margin-bottom: 12px; display: none; }
+.auth-footer { font-size: 12px; color: var(--text2); text-align: center; margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+.auth-link { color: var(--blue); cursor: pointer; font-weight: 500; }
+
+/* Não encontrado */
+.nf-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: center; }
+.nf-icon { width: 52px; height: 52px; border-radius: 50%; background: #FAECE7; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.nf-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.nf-text { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 20px; }
+.nf-steps { text-align: left; background: var(--surface); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
+.nf-step { display: flex; gap: 10px; font-size: 13px; color: var(--text2); line-height: 1.5; }
+.nf-num { width: 22px; height: 22px; border-radius: 50%; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+
+/* WhatsApp badge */
+.wpp-badge { display: flex; align-items: center; gap: 10px; background: #e8f5e9; color: #2e7d32; font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 16px; line-height: 1.5; }
+.masked-phone { font-weight: 700; font-family: monospace; font-size: 14px; }
+
+/* Código */
+.code-grid { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
+.code-box { width: 46px; height: 56px; text-align: center; font-size: 24px; font-weight: 700; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); color: var(--text); outline: none; transition: border-color .15s; }
+.code-box:focus { border-color: var(--blue); background: #fff; }
+.timer-row { font-size: 12px; color: var(--text2); text-align: center; margin-top: 10px; }
+.timer-warn { color: var(--danger-text) !important; }
+
+/* ── APP ── */
+#app { flex: 1; display: none; flex-direction: column; overflow: hidden; max-width: 1100px; width: 100%; margin: 0 auto; }
+.app-inner { flex: 1; display: flex; flex-direction: row; overflow: hidden; min-height: 0; }
+
+/* Topbar */
+.topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; height: 56px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.topbar-logo { font-size: 18px; font-weight: 700; color: var(--blue); }
+.topbar-sep { width: 1px; height: 20px; background: var(--border); }
+.topbar-user { font-size: 13px; color: var(--text2); flex: 1; }
+.topbar-user strong { color: var(--text); }
+.topbar-badge { font-size: 11px; padding: 3px 10px; border-radius: 999px; background: var(--green-bg); color: var(--green-text); font-weight: 600; }
+
+/* Sidebar */
+.sidebar { width: 210px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 12px 8px; gap: 2px; }
+.nav-btn { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; color: var(--text2); transition: all .15s; border: none; background: none; width: 100%; text-align: left; font-family: inherit; }
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn.active { background: var(--blue-light); color: var(--blue); font-weight: 600; }
+.nav-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* Main */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+.panel { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+.panel.active { display: flex; }
+.panel-header { padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.panel-header-title { font-size: 15px; font-weight: 600; flex: 1; }
+.panel-badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+.panel-badge.online { background: var(--green-bg); color: var(--green-text); }
+.panel-badge.ai { background: #EEEDFE; color: #534AB7; }
+
+/* Chat */
+.chat-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.msg { display: flex; gap: 10px; align-items: flex-start; }
+.msg.user { flex-direction: row-reverse; }
+.msg-av { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+.msg-av.bot { background: var(--blue-light); color: var(--blue); }
+.msg-av.usr { background: var(--surface2); color: var(--text2); }
+.msg-bubble { max-width: 75%; padding: 11px 14px; font-size: 14px; line-height: 1.65; }
+.msg-bubble.bot { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 2px 12px 12px 12px; }
+.msg-bubble.usr { background: var(--blue); color: #fff; border-radius: 12px 2px 12px 12px; }
+.msg-time { font-size: 11px; color: var(--text2); margin-top: 4px; }
+.msg-time.r { text-align: right; }
+.typing-dots { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text2); animation: blink 1.2s infinite; }
+.dot:nth-child(2){animation-delay:.2s;} .dot:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
+.chips { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 20px 12px; }
+.chip { font-size: 12px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text2); cursor: pointer; transition: all .15s; white-space: nowrap; }
+.chip:hover { background: var(--blue-light); color: var(--blue); border-color: var(--blue); }
+.chat-input-area { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--surface); display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+.chat-ta { flex: 1; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); font-size: 14px; color: var(--text); resize: none; min-height: 40px; max-height: 100px; font-family: inherit; outline: none; }
+.chat-ta:focus { border-color: var(--blue); background: #fff; }
+.icon-btn { width: 40px; height: 40px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text2); }
+.icon-btn:hover { background: var(--blue-light); color: var(--blue); }
+.send-btn { width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--blue); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.send-btn:hover { opacity: .85; }
+
+/* Formulários */
+.scroll-area { flex: 1; overflow-y: auto; padding: 20px; }
+.fsec { margin-bottom: 24px; }
+.fsec-title { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fgrp { display: flex; flex-direction: column; gap: 5px; }
+.fgrp.full { grid-column: 1/-1; }
+.form-label { font-size: 12px; color: var(--text2); font-weight: 500; }
+.form-input { padding: 9px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); font-size: 14px; color: var(--text); font-family: inherit; outline: none; }
+.form-input:focus { border-color: var(--blue); background: #fff; }
+.form-input[readonly] { color: var(--text2); cursor: default; }
+.form-select { padding: 9px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); font-size: 14px; color: var(--text); font-family: inherit; outline: none; }
+.sit-row { display: flex; gap: 8px; }
+.sit-btn { flex: 1; padding: 9px 6px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); font-size: 13px; color: var(--text2); cursor: pointer; text-align: center; transition: all .15s; font-family: inherit; }
+.sit-btn.on { background: var(--blue-light); color: var(--blue); border-color: var(--blue); font-weight: 600; }
+.form-actions { display: flex; gap: 10px; padding: 14px 20px; border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
+.btn-sec { padding: 10px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); color: var(--text2); font-size: 14px; cursor: pointer; font-family: inherit; }
+
+/* Consulta */
+.info-box { background: var(--blue-light); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 16px; font-size: 13px; color: var(--blue-dark); line-height: 1.6; }
+
+/* Arquivos */
+.drop-zone { border: 1.5px dashed var(--border); border-radius: var(--radius); padding: 28px; text-align: center; color: var(--text2); font-size: 14px; cursor: pointer; background: var(--surface); margin-bottom: 14px; transition: all .15s; }
+.drop-zone:hover { border-color: var(--blue); color: var(--blue); }
+.file-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); margin-bottom: 8px; font-size: 13px; }
+.file-name { flex: 1; color: var(--text); }
+.file-size { color: var(--text2); }
+.file-tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--green-bg); color: var(--green-text); font-weight: 600; }
+
+/* Histórico */
+.hist-row { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); margin-bottom: 10px; }
+.hist-head { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.hist-tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+.hist-tag.chat { background: var(--blue-light); color: var(--blue); }
+.hist-tag.cad { background: var(--green-bg); color: var(--green-text); }
+.hist-tag.arq { background: var(--warn-bg); color: var(--warn-text); }
+.hist-tag.cons { background: #EEEDFE; color: #534AB7; }
+.hist-date { font-size: 11px; color: var(--text2); margin-left: auto; }
+.hist-prev { font-size: 13px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.empty { text-align: center; padding: 48px; color: var(--text2); font-size: 14px; }
+
+/* Canal de verificação */
+.btn-canal { display:flex; align-items:center; gap:14px; width:100%; padding:14px 16px; border-radius:var(--radius); border:2px solid var(--border); background:var(--surface); cursor:pointer; text-align:left; transition:all .15s; }
+.btn-canal:hover { border-color:var(--blue); background:var(--blue-light); }
+.btn-canal:disabled { opacity:.4; cursor:not-allowed; }
+.doc-categoria { font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.07em; margin:16px 0 8px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+.doc-card { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--surface); margin-bottom:8px; transition:all .15s; }
+.doc-card:hover { border-color:var(--blue); background:var(--blue-light); }
+.doc-icon { font-size:24px; flex-shrink:0; }
+.doc-info { flex:1; min-width:0; }
+.doc-name { font-size:13px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:3px; }
+.doc-meta { font-size:11px; color:var(--text2); }
+.doc-download { display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:var(--radius-sm); background:var(--blue); color:#fff; font-size:12px; font-weight:600; border:none; cursor:pointer; flex-shrink:0; text-decoration:none; transition:opacity .15s; }
+.doc-download:hover { opacity:.85; }
+.toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 18px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; color: #fff; background: var(--blue-dark); opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 9999; max-width: 300px; box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+.toast.on { opacity: 1; }
+.toast.ok { background: #3B6D11; }
+.toast.err { background: #A32D2D; }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .sidebar { width: 52px; }
+  .nav-btn span { display: none; }
+  .topbar-user { display: none; }
+  .fgrid { grid-template-columns: 1fr; }
+  .fgrp.full { grid-column: 1/-1; }
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── AUTH ── -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-main">UNASLAF</div>
+      <div class="auth-logo-sub">Atendente Virtual do Associado</div>
+    </div>
+
+    <!-- Step 1: CPF -->
+    <div class="auth-step active" id="s-cpf">
+      <div class="step-title">Identificação</div>
+      <div class="step-sub">Informe seu CPF para acessar o atendimento</div>
+      <div class="flabel">CPF</div>
+      <input class="finput" id="in-cpf" placeholder="000.000.000-00" maxlength="14"
+        oninput="maskCPF(this)" onkeydown="if(event.key==='Enter')doLookup()" autocomplete="off" />
+      <div class="field-err" id="err-cpf">CPF inválido. Verifique e tente novamente.</div>
+      <button class="btn-primary" id="btn-lookup" onclick="doLookup()">
+        <span id="btn-lbl">Continuar</span>
+      </button>
+      <div class="auth-footer">
+        <span>🔒 Seus dados são protegidos e criptografados</span>
+      </div>
+    </div>
+
+    <!-- Step 2: Não encontrado -->
+    <div class="auth-step" id="s-notfound">
+      <div class="nf-box">
+        <div class="nf-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#D85A30" stroke-width="1.5"/><path d="M12 8v4m0 4v.01" stroke="#D85A30" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="nf-title">CPF não encontrado</div>
+        <div class="nf-text">O CPF <strong id="nf-cpf"></strong> não consta na base de associados da Unaslaf.</div>
+        <div class="nf-steps">
+          <div class="nf-step"><div class="nf-num">1</div><span>Envie sua ficha de atualização cadastral pelo site <strong>unaslaf.org.br</strong></span></div>
+          <div class="nf-step"><div class="nf-num">2</div><span>Aguarde o processamento pela Unaslaf (até 2 dias úteis)</span></div>
+          <div class="nf-step"><div class="nf-num">3</div><span>Certifique-se de que seu <strong>WhatsApp</strong> está correto no cadastro</span></div>
+          <div class="nf-step"><div class="nf-num">4</div><span>Retorne aqui e tente novamente</span></div>
+        </div>
+        <button class="btn-outline" onclick="voltarCPF()">Tentar com outro CPF</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Código -->
+    <div class="auth-step" id="s-code">
+      <div class="step-title">Código de verificação</div>
+      <div class="step-sub">Digite o código de 6 dígitos enviado ao seu WhatsApp</div>
+      <div class="wpp-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.23-1.57A11.93 11.93 0 0012 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.22-3.48-8.52z" fill="#25D366"/><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47s1.07 2.87 1.22 3.07c.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.19-.57-.34z" fill="#fff"/></svg>
+        <span>Código enviado para <span class="masked-phone" id="masked-phone"></span></span>
+      </div>
+      <div class="code-grid">
+        <input class="code-box" maxlength="1" id="c0" oninput="codeNav(this,0)" onkeydown="codeBack(event,0)" />
+        <input class="code-box" maxlength="1" id="c1" oninput="codeNav(this,1)" onkeydown="codeBack(event,1)" />
+        <input class="code-box" maxlength="1" id="c2" oninput="codeNav(this,2)" onkeydown="codeBack(event,2)" />
+        <input class="code-box" maxlength="1" id="c3" oninput="codeNav(this,3)" onkeydown="codeBack(event,3)" />
+        <input class="code-box" maxlength="1" id="c4" oninput="codeNav(this,4)" onkeydown="codeBack(event,4)" />
+        <input class="code-box" maxlength="1" id="c5" oninput="codeNav(this,5)" onkeydown="codeBack(event,5)" />
+      </div>
+      <div class="field-err" id="err-code" style="display:none;text-align:center;">Código incorreto. Tente novamente.</div>
+      <button class="btn-primary" onclick="verifyCode()">Verificar e entrar</button>
+      <div class="timer-row" id="timer-row">Código expira em <span id="timer">05:00</span></div>
+      <div class="auth-footer">
+        <span>Não recebeu? <span class="auth-link" onclick="resendCode()">Reenviar código</span></span>
+        <span class="auth-link" onclick="voltarCPF()">← Voltar ao início</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-logo">UNASLAF</div>
+    <div class="topbar-sep"></div>
+    <div class="topbar-user">Bem-vindo, <strong id="top-name">Associado</strong> &nbsp;·&nbsp; <span id="top-cpf"></span></div>
+    <div class="topbar-badge">Online</div>
+  </div>
+
+  <div class="app-inner">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <button class="nav-btn active" onclick="showPanel('chat',this)">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M14 9.333A1.333 1.333 0 0112.667 10.667H4.667L2 13.333V3.333A1.333 1.333 0 013.333 2H12.667A1.333 1.333 0 0114 3.333V9.333z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        <span>Atendimento</span>
+      </button>
+      <button class="nav-btn" onclick="showPanel('consulta',this)">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M11.5 11.5L14 14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span>Consulta Processual</span>
+      </button>
+      <button class="nav-btn" onclick="showPanel('cadastro',this)">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 13.5c0-2.485 2.686-4.5 6-4.5s6 2.015 6 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span>Atualizar Cadastro</span>
+      </button>
+      <button class="nav-btn" onclick="showPanel('historico',this)">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3.5l2 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span>Histórico</span>
+      </button>
+      <button class="nav-btn" onclick="showPanel('documentos',this);loadDocumentos()">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M13 3H7L5 1H3a1 1 0 00-1 1v12a1 1 0 001 1h10a1 1 0 001-1V4a1 1 0 00-1-1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        <span>Documentos</span>
+      </button>
+    </div><!-- /sidebar -->
+
+    <!-- Main -->
+    <div class="main">
+
+      <!-- CHAT -->
+      <div class="panel active" id="panel-chat">
+        <div class="panel-header">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M14 9.333A1.333 1.333 0 0112.667 10.667H4.667L2 13.333V3.333A1.333 1.333 0 013.333 2H12.667A1.333 1.333 0 0114 3.333V9.333z" stroke="#185FA5" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <span class="panel-header-title">Atendimento</span>
+          <span class="panel-badge online">Online</span>
+        </div>
+        <div style="background:#FFF8E1;border-bottom:1px solid #F9A825;padding:10px 16px;font-size:12px;color:#6D4C00;line-height:1.6;flex-shrink:0;">
+          ⚠️ <strong>Aviso importante:</strong> As informações geradas por inteligência artificial têm caráter <strong>orientativo e não oficial</strong>. Não substituem a consulta aos canais oficiais de informação processual, a assessoria jurídica especializada ou as autoridades competentes. Utilize este recurso apenas como ponto de partida para direcionar sua pesquisa.
+        </div>
+        <div class="chat-body" id="chat-msgs"></div>
+        <div class="chips" id="chips-area">
+          <span class="chip" onclick="chip('O que é a Unaslaf?')">O que é a Unaslaf?</span>
+          <span class="chip" onclick="chip('Quais ações coletivas estão em andamento?')">Ações coletivas</span>
+          <span class="chip" onclick="chip('Qual o resultado da ADI 4151?')">ADI 4151</span>
+          <span class="chip" onclick="chip('Como me filiar à Unaslaf?')">Como me filiar</span>
+          <span class="chip" onclick="chip('Quais são os direitos dos associados?')">Direitos dos associados</span>
+        </div>
+        <div class="chat-input-area">
+          <button class="icon-btn" onclick="document.getElementById('fi-chat').click()" title="Anexar arquivo">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M13.5 9.5l-5 5a4.5 4.5 0 01-6.364-6.364l6-6a3 3 0 014.243 4.243l-6 6a1.5 1.5 0 01-2.122-2.122l5-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </button>
+          <input type="file" id="fi-chat" style="display:none" onchange="chatFile(this)" />
+          <textarea class="chat-ta" id="chat-in" placeholder="Digite sua mensagem..." rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"></textarea>
+          <button class="send-btn" onclick="sendMsg()">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M14 2L2 7l5 2 2 5 5-12z" fill="white"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- CONSULTA -->
+      <div class="panel" id="panel-consulta">
+        <div class="panel-header">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#185FA5" stroke-width="1.3"/><path d="M11.5 11.5L14 14" stroke="#185FA5" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="panel-header-title">Consulta Processual</span>
+          <span class="panel-badge ai">IA</span>
+        </div>
+        <div class="scroll-area">
+          <div style="background:#FFF8E1;border:1px solid #F9A825;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;font-size:12px;color:#6D4C00;line-height:1.7;">
+            ⚠️ <strong>Aviso importante:</strong> As informações geradas por inteligência artificial têm caráter <strong>orientativo e não oficial</strong>. Não substituem a consulta aos canais oficiais de informação processual, a assessoria jurídica especializada ou as autoridades competentes. Utilize este recurso apenas como ponto de partida para direcionar sua pesquisa.
+          </div>
+          <div class="fgrid" style="margin-bottom:12px;">
+            <div class="fgrp"><div class="form-label">Nome completo</div><input class="form-input" id="c-nome" readonly style="color:var(--text2);cursor:default;" /></div>
+            <div class="fgrp"><div class="form-label">CPF</div><input class="form-input" id="c-cpf" readonly style="color:var(--text2);cursor:default;" /></div>
+          </div>
+          <div class="fgrid" style="margin-bottom:12px;">
+            <div class="fgrp">
+              <div class="form-label">Tribunal</div>
+              <select class="form-select" id="c-trib">
+                <option value="trf1">TRF1 — 1ª Região (DF, MG, BA, GO, MT, PA, AM e outros)</option>
+                <option value="trf2">TRF2 — 2ª Região (RJ, ES)</option>
+                <option value="trf3">TRF3 — 3ª Região (SP, MS)</option>
+                <option value="trf4">TRF4 — 4ª Região (RS, SC, PR)</option>
+                <option value="trf5">TRF5 — 5ª Região (PE, CE, AL, SE, PB, RN)</option>
+                <option value="trf6">TRF6 — 6ª Região (MG)</option>
+                <option value="stj">STJ — Superior Tribunal de Justiça</option>
+                <option value="stf">STF — Supremo Tribunal Federal</option>
+              </select>
+            </div>
+            <div class="fgrp"><div class="form-label">Número do processo (opcional)</div><input class="form-input" id="c-num" placeholder="0000000-00.0000.0.00.0000" /></div>
+          </div>
+          <button class="btn-primary" style="max-width:200px;margin-bottom:20px;" onclick="doConsulta()">
+            <span id="c-btn-lbl">Consultar via IA</span>
+          </button>
+          <div id="c-loading" style="display:none;padding:20px 0;font-size:13px;color:var(--text2);">
+            <div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+            <span style="margin-left:8px;">Pesquisando via IA...</span>
+          </div>
+          <div id="c-result" style="display:none;">
+            <div class="fsec-title" style="margin-bottom:12px;">Resultado da consulta</div>
+            <div style="background:#FFF8E1;border:1px solid #F9A825;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;font-size:12px;color:#6D4C00;">
+              ⚠️ Resultado gerado por IA — caráter orientativo. Confirme sempre nos portais oficiais dos tribunais.
+            </div>
+            <div id="c-result-body" style="font-size:14px;line-height:1.8;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CADASTRO -->
+      <div class="panel" id="panel-cadastro" style="flex-direction:column;">
+        <div class="panel-header">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="#185FA5" stroke-width="1.3"/><path d="M2 13.5c0-2.485 2.686-4.5 6-4.5s6 2.015 6 4.5" stroke="#185FA5" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="panel-header-title">Atualização de Cadastro</span>
+        </div>
+        <div class="scroll-area">
+          <div class="fsec">
+            <div class="fsec-title">Dados funcionais</div>
+            <div class="fgrid">
+              <div class="fgrp"><div class="form-label">Matrícula SIAPE</div><input class="form-input" id="f-siape" readonly style="color:var(--text2);cursor:default;" /></div>
+              <div class="fgrp"><div class="form-label">Cargo</div><input class="form-input" id="f-cargo" placeholder="Analista / Técnico do Seguro Social" /></div>
+              <div class="fgrp full">
+                <div class="form-label" style="margin-bottom:7px;">Situação funcional</div>
+                <div class="sit-row">
+                  <button class="sit-btn on" id="sit-ativo" onclick="setSit('Ativo')">Ativo</button>
+                  <button class="sit-btn" id="sit-apos" onclick="setSit('Aposentado')">Aposentado</button>
+                  <button class="sit-btn" id="sit-pens" onclick="setSit('Pensionista')">Pensionista</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fsec">
+            <div class="fsec-title">Dados pessoais</div>
+            <div class="fgrid">
+              <div class="fgrp full"><div class="form-label">Nome completo <span style="color:var(--danger-text)">*</span></div><input class="form-input" id="f-nome" oninput="validateCad()" /></div>
+              <div class="fgrp"><div class="form-label">CPF</div><input class="form-input" id="f-cpf" readonly style="color:var(--text2);cursor:default;" /></div>
+              <div class="fgrp"><div class="form-label">Telefone / WhatsApp <span style="color:var(--danger-text)">*</span></div><input class="form-input" id="f-tel" placeholder="(00) 00000-0000" oninput="validateCad()" /></div>
+              <div class="fgrp full"><div class="form-label">E-mail <span style="color:var(--danger-text)">*</span></div><input class="form-input" id="f-email" type="email" oninput="validateCad()" /></div>
+            </div>
+          </div>
+          <div class="fsec">
+            <div class="fsec-title">Endereço</div>
+            <div class="fgrid">
+              <div class="fgrp full"><div class="form-label">Endereço completo</div><input class="form-input" id="f-end" placeholder="Rua, número, complemento, bairro" /></div>
+              <div class="fgrp"><div class="form-label">Cidade</div><input class="form-input" id="f-cidade" /></div>
+              <div class="fgrp"><div class="form-label">UF</div>
+                <select class="form-select" id="f-uf">
+                  <option value="">Selecione</option>
+                  <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-sec" onclick="clearCad()">Limpar</button>
+          <button class="btn-primary" id="cad-save-btn" style="max-width:220px;" onclick="saveCad()">
+            <span id="cad-btn-lbl">Salvar Cadastro</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- HISTÓRICO -->
+      <div class="panel" id="panel-historico">
+        <div class="panel-header">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#185FA5" stroke-width="1.3"/><path d="M8 5v3.5l2 2" stroke="#185FA5" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="panel-header-title">Histórico de Interações</span>
+        </div>
+        <div class="scroll-area" id="hist-list">
+          <div class="empty">Nenhuma interação registrada ainda.</div>
+        </div>
+      </div>
+
+      <!-- DOCUMENTOS -->
+      <div class="panel" id="panel-documentos">
+        <div class="panel-header">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M13 3H7L5 1H3a1 1 0 00-1 1v12a1 1 0 001 1h10a1 1 0 001-1V4a1 1 0 00-1-1z" stroke="#185FA5" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <span class="panel-header-title">Repositório de Documentos</span>
+          <span class="panel-badge online" id="doc-count" style="display:none;"></span>
+        </div>
+        <div class="scroll-area">
+          <div style="margin-bottom:14px;">
+            <input class="form-input" id="doc-search" placeholder="🔍  Buscar documento..." oninput="filterDocumentos()" style="width:100%;" />
+          </div>
+          <div id="doc-loading" style="text-align:center;padding:32px;color:var(--text2);font-size:14px;">
+            <div class="typing-dots" style="justify-content:center;margin-bottom:10px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+            Carregando documentos...
+          </div>
+          <div id="doc-list" style="display:none;"></div>
+          <div id="doc-empty" style="display:none;" class="empty">Nenhum documento encontrado.</div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /app-inner -->
+</div><!-- /app -->
+
+<script>
+// ── CONTEXTO DA IA ──────────────────────────────────────────
+const CTX = `Você é o atendente virtual oficial da UNASLAF (Associação Nacional dos Servidores da Secretaria da Receita Previdenciária). CNPJ 73.369.795/0001-83. Sede: SCN-Qd.6-Bloco A, Ed. Venâncio 3000, 4º andar, salas 413/414, Brasília-DF. Site: https://unaslaf.org.br. Representa servidores da extinta Secretaria da Receita Previdenciária (ativos, aposentados e pensionistas).
+
+AÇÕES COLETIVAS EM ANDAMENTO:
+1. Adicional de Fronteira — Processo 1022299-41.2018.4.01.3400 (TRF1/22ª Vara SJDF). Ação para garantir adicional de fronteira (Lei 12.855/2013) aos servidores da Carreira do Seguro Social redistribuídos à RFB. Mérito pendente de julgamento.
+2. Jornada/Abono de Ponto — MS 1024043-71.2018.4.01.3400 (TRF1/2ª Vara SJDF). Mandado de Segurança contra IN nº 02/2018 do MPDG sobre jornada de trabalho.
+3. ADI 4151 — STF. VITÓRIA UNÂNIME 10x0 em abril/2026! Transforma cargos de servidores ativos, aposentados e instituidores de pensão. Marco histórico para a categoria.
+4. PASEP — Processo 0727740-19.2020.8.07.0001 — Julgado improcedente (março/2026).
+
+ORIENTAÇÕES: Responda sempre em português brasileiro, linguagem clara e acolhedora. Para atualização de dados, oriente a usar "Atualizar Cadastro". Se não souber algo, indique o site unaslaf.org.br.
+
+Quando o associado pedir fichas, formulários ou documentos para download, e forem fornecidos links no contexto, apresente-os como links clicáveis com o texto do nome do arquivo.`;
+
+// ── ESTADO ──────────────────────────────────────────────────
+let user = {cpf:'',cpfFmt:'',name:'',phone:'',data:[]};
+let vCode = '';
+let sit = 'Ativo';
+let pendingFiles = [];
+let hist = [];
+let convHist = [];
+let timerInt = null;
+
+// ── UTILITÁRIOS ─────────────────────────────────────────────
+function now(){ return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }
+
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast on'+(type?' '+type:'');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),3500);
+}
+
+function maskCPF(el){
+  let v=el.value.replace(/\D/g,'').slice(0,11);
+  v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})\.(\d{3})(\d)/,'$1.$2.$3').replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/,'$1.$2.$3-$4');
+  el.value=v;
+}
+function maskPhone(raw){
+  const d=(raw||'').replace(/\D/g,'');
+  if(d.length<4) return '****';
+  return '('+d.slice(2,4)+') *****-'+d.slice(-4);
+}
+function maskEmail(e){
+  if(!e||!e.includes('@')) return '****';
+  const [u,d]=e.split('@');
+  return u.slice(0,3)+'***@'+d;
+}
+function switchStep(from,to){
+  document.getElementById(from).classList.remove('active');
+  document.getElementById(to).classList.add('active');
+}
+function voltarCPF(){
+  document.querySelectorAll('.auth-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-cpf').classList.add('active');
+  document.getElementById('in-cpf').value='';
+  [0,1,2,3,4,5].forEach(i=>document.getElementById('c'+i).value='');
+  document.getElementById('err-code').style.display='none';
+  clearInterval(timerInt);
+}
+
+// ── PARSEAR CSV ─────────────────────────────────────────────
+function parseCSV(text){
+  const rows=[];
+  for(const line of text.replace(/\r/g,'').split('\n')){
+    if(!line.trim()) continue;
+    const cols=[]; let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch==='"'){inQ=!inQ;continue;}
+      if(ch===','&&!inQ){cols.push(cur.trim());cur='';continue;}
+      cur+=ch;
+    }
+    cols.push(cur.trim());
+    rows.push(cols);
+  }
+  return rows;
+}
+
+// ── LOOKUP CPF ──────────────────────────────────────────────
+async function doLookup(){
+  const raw=document.getElementById('in-cpf').value.replace(/\D/g,'');
+  if(raw.length!==11){document.getElementById('err-cpf').style.display='block';return;}
+  document.getElementById('err-cpf').style.display='none';
+  user.cpf=raw; user.cpfFmt=document.getElementById('in-cpf').value;
+
+  const btn=document.getElementById('btn-lookup'),lbl=document.getElementById('btn-lbl');
+  btn.disabled=true; lbl.innerHTML='<div class="spinner"></div> Consultando cadastro...';
+
+  let found=false,foundName='',foundPhone='';
+
+  try{
+    // Chama nosso proxy no Vercel — sem CORS
+    const r=await fetch('/api/sheet');
+    if(r.ok){
+      const csv=await r.text();
+      const rows=parseCSV(csv);
+      // Nova estrutura: [0]Origem [1]SIAPE [2]Nome [3]CPF [4]Email [5]Telefone [6]Obs [7]Cargo [8]Servidor/Pensionista [9]Situação [10]Órgão [11]End [12]Cidade [13]UF [14]Data
+      for(let i=1;i<rows.length;i++){
+        const c=rows[i]; if(!c||c.length<4) continue;
+        if((c[3]||'').replace(/\D/g,'')===raw){
+          found=true;
+          foundName=(c[2]||'').trim();
+          foundPhone=(c[5]||'').replace(/\D/g,'');
+          user.data = c; // salva linha completa
+          break;
+        }
+      }
+    }
+  }catch(e){ console.warn('sheet error:',e); }
+
+  btn.disabled=false; lbl.textContent='Continuar';
+
+  if(!found){
+    document.getElementById('nf-cpf').textContent=user.cpfFmt;
+    switchStep('s-cpf','s-notfound'); return;
+  }
+
+  user.name=foundName;
+  user.phone=foundPhone?(foundPhone.startsWith('55')?foundPhone:'55'+foundPhone):'';
+
+  vCode=String(Math.floor(100000+Math.random()*900000));
+  if(user.phone) await sendWhatsApp(user.phone,`🔐 *UNASLAF — Atendente Virtual*\n\nOlá, ${foundName}!\n\nSeu código de verificação:\n\n*${vCode}*\n\nVálido por 10 minutos. Não compartilhe.`);
+
+  document.getElementById('masked-phone').textContent=user.phone?maskPhone(user.phone):'número não cadastrado';
+  switchStep('s-cpf','s-code');
+  document.getElementById('c0').focus();
+  startTimer(600);
+}
+
+// ── WHATSAPP ────────────────────────────────────────────────
+async function sendWhatsApp(phone,message){
+  try{ await fetch('/api/whatsapp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,message})}); }
+  catch(e){ console.warn('whatsapp error:',e); }
+}
+
+async function resendCode(){
+  vCode=String(Math.floor(100000+Math.random()*900000));
+  if(user.phone) await sendWhatsApp(user.phone,`🔐 *UNASLAF*\nNovo código: *${vCode}*\nVálido 10 min.`);
+  startTimer(600); toast('Novo código enviado!','ok');
+}
+
+// ── TIMER ────────────────────────────────────────────────────
+function startTimer(sec){
+  clearInterval(timerInt); let s=sec;
+  const el=document.getElementById('timer'),row=document.getElementById('timer-row');
+  row.className='timer-row';
+  timerInt=setInterval(()=>{
+    s--; el.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+    if(s<=60) row.className='timer-row timer-warn';
+    if(s<=0){clearInterval(timerInt);el.textContent='expirado';}
+  },1000);
+}
+
+// ── CÓDIGO ──────────────────────────────────────────────────
+function codeNav(el,i){
+  el.value=el.value.replace(/\D/g,'');
+  if(el.value&&i<5) document.getElementById('c'+(i+1)).focus();
+  if([0,1,2,3,4,5].map(x=>document.getElementById('c'+x).value).join('').length===6) setTimeout(verifyCode,80);
+}
+function codeBack(e,i){ if(e.key==='Backspace'&&!document.getElementById('c'+i).value&&i>0) document.getElementById('c'+(i-1)).focus(); }
+function verifyCode(){
+  const entered=[0,1,2,3,4,5].map(i=>document.getElementById('c'+i).value).join('');
+  if(entered===vCode){clearInterval(timerInt);loginSuccess();}
+  else{
+    document.getElementById('err-code').style.display='block';
+    [0,1,2,3,4,5].forEach(i=>document.getElementById('c'+i).value='');
+    document.getElementById('c0').focus();
+    setTimeout(()=>document.getElementById('err-code').style.display='none',3000);
+  }
+}
+
+// ── LOGIN ────────────────────────────────────────────────────
+function loginSuccess(){
+  const first=user.name.split(' ')[0]||'Associado';
+  document.getElementById('top-name').textContent=first;
+  document.getElementById('top-cpf').textContent=user.cpfFmt;
+
+  // Preenche campos do cadastro com todos os dados da planilha
+  // Nova estrutura: [0]Origem [1]SIAPE [2]Nome [3]CPF [4]Email [5]Tel [6]Obs [7]Cargo [8]Serv/Pens [9]Situação [10]Órgão [11]End [12]Cidade [13]UF
+  document.getElementById('f-cpf').value    = user.cpfFmt;
+  document.getElementById('f-nome').value   = user.data[2]  || '';
+  document.getElementById('f-siape').value  = user.data[1]  || '';
+  document.getElementById('f-cargo').value  = user.data[7]  || '';
+  document.getElementById('f-tel').value    = user.data[5]  || '';
+  document.getElementById('f-email').value  = user.data[4]  || '';
+  document.getElementById('f-end').value    = user.data[11] || '';
+  document.getElementById('f-cidade').value = user.data[12] || '';
+  const uf = user.data[13] || '';
+  document.getElementById('f-uf').value     = uf.toUpperCase();
+  setSit(user.data[9] || 'Ativo');
+
+  // Preenche campo de nome na consulta processual
+  document.getElementById('c-cpf').value    = user.cpfFmt;
+  document.getElementById('c-nome').value   = user.data[2]  || '';
+
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  initCadValidation();
+  addBotMsg(`Olá, ${first}! Identidade verificada com sucesso ✓\n\nSou o atendente virtual da Unaslaf. Estou aqui para ajudar com informações sobre a associação, consultas processuais, atualização de cadastro e envio de documentos.\n\nComo posso ajudar você hoje?`);
+  addHist('chat','Sessão autenticada — '+user.cpfFmt);
+}
+
+// ── NAVEGAÇÃO ────────────────────────────────────────────────
+function showPanel(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ── CHAT ─────────────────────────────────────────────────────
+function addBotMsg(text){
+  const w=document.getElementById('chat-msgs'),el=document.createElement('div');
+  el.className='msg';
+  el.innerHTML=`<div class="msg-av bot">U</div><div><div class="msg-bubble bot" style="white-space:pre-wrap;">${text}</div><div class="msg-time">${now()}</div></div>`;
+  w.appendChild(el); w.scrollTop=w.scrollHeight;
+}
+function addBotMsgHtml(html){
+  const w=document.getElementById('chat-msgs'),el=document.createElement('div');
+  el.className='msg';
+  // Converte quebras de linha em <br> preservando HTML
+  const formatted = html.replace(/\n/g,'<br>');
+  el.innerHTML=`<div class="msg-av bot">U</div><div><div class="msg-bubble bot">${formatted}</div><div class="msg-time">${now()}</div></div>`;
+  w.appendChild(el); w.scrollTop=w.scrollHeight;
+}
+function addUserMsg(text){
+  const w=document.getElementById('chat-msgs'),el=document.createElement('div');
+  el.className='msg user';
+  el.innerHTML=`<div class="msg-av usr">A</div><div><div class="msg-bubble usr">${text}</div><div class="msg-time r">${now()}</div></div>`;
+  w.appendChild(el); w.scrollTop=w.scrollHeight;
+}
+function showTyping(){
+  const w=document.getElementById('chat-msgs'),el=document.createElement('div');
+  el.className='msg'; el.id='typing';
+  el.innerHTML='<div class="msg-av bot">U</div><div class="msg-bubble bot"><div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
+  w.appendChild(el); w.scrollTop=w.scrollHeight;
+}
+function hideTyping(){ const e=document.getElementById('typing'); if(e)e.remove(); }
+
+// Palavras que indicam pedido de documento
+const DOCUMENTO_REGEX = /ficha|formulário|formulario|modelo|procuração|procuracao|filia|desfilia|requerimento|solicit|baixar|download|documento/i;
+
+// Cache do repositório no frontend
+let repoFiles = [];
+async function getRepoFiles() {
+  if (repoFiles.length) return repoFiles;
+  try {
+    const r = await fetch('/api/repositorio');
+    const d = await r.json();
+    repoFiles = d.files || [];
+  } catch(e) { repoFiles = []; }
+  return repoFiles;
+}
+
+function findRelevantFiles(files, pergunta) {
+  const q = pergunta.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  return files.filter(f => {
+    const name = f.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const cat  = (f.categoria||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const palavras = q.split(/\s+/).filter(p => p.length > 3);
+    return palavras.some(p => name.includes(p) || cat.includes(p));
+  });
+}
+
+async function sendMsg(){
+  const inp=document.getElementById('chat-in'),text=inp.value.trim();
+  if(!text) return; inp.value='';
+  addUserMsg(text);
+  document.getElementById('chips-area').style.display='none';
+  convHist.push({role:'user',content:text}); showTyping();
+
+  // Verifica se é pedido de documento/ficha
+  let docContext = '';
+  if (DOCUMENTO_REGEX.test(text)) {
+    const files = await getRepoFiles();
+    const relevantes = findRelevantFiles(files, text);
+    if (relevantes.length > 0) {
+      docContext = '\n\nDOCUMENTOS DISPONÍVEIS PARA DOWNLOAD (inclua estes links na resposta):\n' +
+        relevantes.map(f =>
+          `• ${f.icon} [${f.name}](https://unaslaf-app.vercel.app${f.downloadUrl}) — ${f.size}`
+        ).join('\n');
+    } else if (files.length > 0) {
+      docContext = '\n\nDOCUMENTOS DISPONÍVEIS NO REPOSITÓRIO:\n' +
+        files.map(f =>
+          `• ${f.icon} [${f.name}](https://unaslaf-app.vercel.app${f.downloadUrl})`
+        ).join('\n') +
+        '\n\nSe o documento solicitado estiver na lista acima, apresente o link para download.';
+    }
+  }
+
+  try{
+    const msgContent = docContext ? text + docContext : text;
+    const messagesParaEnviar = [
+      ...convHist.slice(0,-1),
+      {role:'user', content: msgContent}
+    ];
+
+    const r=await fetch('/api/chat',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system:CTX,
+        messages:messagesParaEnviar,
+        userName: user.name,
+        userCpf: user.cpfFmt,
+        baseUrl: window.location.origin,
+      })
+    });
+    const d=await r.json(); hideTyping();
+    const reply=d.content?.[0]?.text||d.error||'Não foi possível obter resposta.';
+
+    // Converte markdown links [texto](url) em links HTML clicáveis
+    const replyHtml = reply
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,
+        '<a href="$2" target="_blank" style="color:var(--blue);font-weight:500;text-decoration:underline;">$1</a>');
+
+    addBotMsgHtml(replyHtml);
+    convHist.push({role:'assistant',content:reply});
+    addHist('chat',text.slice(0,70));
+  }catch(e){ hideTyping(); addBotMsg('Erro ao conectar com o servidor. Tente novamente.'); }
+}
+function chip(t){document.getElementById('chat-in').value=t;sendMsg();}
+function chatFile(inp){
+  if(!inp.files.length) return; const f=inp.files[0];
+  addUserMsg(`📎 ${f.name}`);
+  addBotMsg(`Recebi o arquivo "${f.name}". Para enviá-lo formalmente à UNASLAF, entre em contato pelo site unaslaf.org.br.`);
+  addHist('arq',f.name);
+}
+
+// ── SITUAÇÃO ────────────────────────────────────────────────
+function setSit(v){
+  sit=v;
+  ['Ativo','Aposentado','Pensionista'].forEach(s=>{
+    const id='sit-'+s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').slice(0,4);
+    document.getElementById(id)?.classList.toggle('on',s===v);
+  });
+  document.getElementById('sit-ativo').classList.toggle('on',v==='Ativo');
+  document.getElementById('sit-apos').classList.toggle('on',v==='Aposentado');
+  document.getElementById('sit-pens').classList.toggle('on',v==='Pensionista');
+}
+
+// ── CADASTRO ────────────────────────────────────────────────
+function validateCad() {
+  const campos = [
+    { id: 'f-nome',  val: document.getElementById('f-nome')?.value.trim() },
+    { id: 'f-email', val: document.getElementById('f-email')?.value.trim() },
+    { id: 'f-tel',   val: document.getElementById('f-tel')?.value.trim() },
+  ];
+
+  let allOk = true;
+  campos.forEach(({ id, val }) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!val) {
+      el.style.background = '#FFEBEE'; // vermelho claro
+      el.style.borderColor = '#E57373';
+      allOk = false;
+    } else {
+      el.style.background = '';
+      el.style.borderColor = '';
+    }
+  });
+
+  const btn = document.getElementById('cad-save-btn');
+  if (btn) {
+    btn.disabled = !allOk;
+    btn.style.opacity = allOk ? '1' : '0.5';
+    btn.style.cursor  = allOk ? 'pointer' : 'not-allowed';
+  }
+}
+
+// Adiciona listeners de validação em tempo real
+function initCadValidation() {
+  ['f-nome','f-email','f-tel'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', validateCad);
+  });
+  validateCad();
+}
+
+async function saveCad() {
+  const nome  = document.getElementById('f-nome').value.trim();
+  const cpf   = document.getElementById('f-cpf').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const tel   = document.getElementById('f-tel').value.trim();
+
+  if (!nome || !cpf || !email || !tel) {
+    toast('Preencha os campos obrigatórios: Nome, E-mail e Telefone', 'err');
+    return;
+  }
+
+  const lbl = document.getElementById('cad-btn-lbl');
+  lbl.innerHTML = '<div class="spinner"></div> Salvando...';
+
+  // Monta linha na nova ordem da planilha ROLDEASSOCIADOS_APP_CONSOLIDADO:
+  // [0]Origem [1]SIAPE [2]Nome [3]CPF [4]Email [5]Tel [6]Obs [7]Cargo [8]Serv/Pens [9]Situação [10]Órgão [11]End [12]Cidade [13]UF
+  const row = [
+    user.data[0] || 'Unaslaf',                                  // Origem
+    document.getElementById('f-siape').value.trim(),            // SIAPE
+    nome,                                                        // Nome
+    cpf,                                                         // CPF
+    email,                                                       // Email
+    tel,                                                         // Telefone
+    user.data[6] || '',                                         // Observações (mantém)
+    document.getElementById('f-cargo').value.trim(),            // Cargo
+    user.data[8] || '',                                         // Servidor/Pensionista (mantém)
+    sit,                                                         // Situação funcional
+    user.data[10] || '',                                        // Órgão (mantém)
+    document.getElementById('f-end').value.trim(),              // Endereço
+    document.getElementById('f-cidade').value.trim(),           // Cidade
+    document.getElementById('f-uf').value,                      // UF
+  ];
+
+  try {
+    const r = await fetch('/api/cadastro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ row, alteradoPor: 'Usuário' }),
+    });
+    const d = await r.json();
+    lbl.textContent = 'Salvar Cadastro';
+
+    if (d.success) {
+      const acao = d.action === 'atualizado' ? 'Cadastro atualizado' : 'Cadastro inserido';
+      toast(`${acao} com sucesso!`, 'ok');
+      addHist('cad', `${acao}: ${nome}`);
+    } else {
+      toast('Erro ao salvar: ' + (d.error || 'tente novamente'), 'err');
+    }
+  } catch(e) {
+    lbl.textContent = 'Salvar Cadastro';
+    toast('Erro ao conectar com o servidor', 'err');
+    console.error(e);
+  }
+}
+function clearCad(){
+  ['f-siape','f-cargo','f-tel','f-email','f-end','f-cidade'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('f-uf').value=''; setSit('Ativo');
+}
+
+// ── ARQUIVOS ────────────────────────────────────────────────
+function addFiles(inp){ for(const f of inp.files) pendingFiles.push(f); renderFiles(); }
+function renderFiles(){
+  const el=document.getElementById('file-list');
+  if(!pendingFiles.length){el.innerHTML='<div class="empty">Nenhum arquivo selecionado</div>';return;}
+  el.innerHTML=pendingFiles.map((f,i)=>`
+    <div class="file-row" id="file-row-${i}">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M9 1.5H3.5A1.5 1.5 0 002 3v10a1.5 1.5 0 001.5 1.5h9A1.5 1.5 0 0014 13V6l-5-4.5z" stroke="#185FA5" stroke-width="1.2"/></svg>
+      <span class="file-name">${f.name}</span>
+      <span class="file-size">${(f.size/1024).toFixed(0)} KB</span>
+      <span class="file-tag" id="file-tag-${i}">Pronto</span>
+    </div>`).join('');
+}
+
+async function uploadDrive(){
+  if(!pendingFiles.length){toast('Selecione ao menos um arquivo','err');return;}
+  const desc = document.getElementById('f-desc').value || 'sem descrição';
+
+  // Monta FormData com todos os arquivos + metadados
+  const formData = new FormData();
+  pendingFiles.forEach((f, i) => {
+    // Renomeia o arquivo incluindo CPF, data e descrição
+    const dt = new Date().toISOString().slice(0,10);
+    const ext = f.name.split('.').pop();
+    const newName = `${user.cpf}_${dt}_${desc.slice(0,20).replace(/\s+/g,'_')}_${i+1}.${ext}`;
+    formData.append('files', f, newName);
+    // Atualiza tag visual
+    const tag = document.getElementById('file-tag-'+i);
+    if(tag){ tag.textContent='Enviando...'; tag.style.background='var(--warn-bg)'; tag.style.color='var(--warn-text)'; }
+  });
+
+  toast(`Enviando ${pendingFiles.length} arquivo(s) ao Drive...`);
+
+  try{
+    const r = await fetch('/api/upload', { method:'POST', body: formData });
+    const d = await r.json();
+
+    if(d.success){
+      toast(`${d.uploaded.length} arquivo(s) enviado(s) com sucesso!`, 'ok');
+      d.uploaded.forEach((u,i)=>{
+        const tag = document.getElementById('file-tag-'+i);
+        if(tag){ tag.textContent='Enviado ✓'; tag.style.background='var(--green-bg)'; tag.style.color='var(--green-text)'; }
+        addHist('arq', u.filename);
+      });
+      setTimeout(()=>{ pendingFiles=[]; renderFiles(); document.getElementById('f-desc').value=''; }, 2000);
+    } else {
+      toast('Erro ao enviar: ' + (d.error||'tente novamente'), 'err');
+    }
+  } catch(e){
+    toast('Erro ao conectar com o servidor', 'err');
+    console.error(e);
+  }
+}
+
+// ── CONSULTA ────────────────────────────────────────────────
+async function doConsulta(){
+  const nome = document.getElementById('c-nome').value;
+  const cpf  = document.getElementById('c-cpf').value;
+  const num  = document.getElementById('c-num').value;
+  const trib = document.getElementById('c-trib').value;
+
+  if(!nome && !num){ toast('Nome do associado não identificado','err'); return; }
+
+  document.getElementById('c-loading').style.display='flex';
+  document.getElementById('c-result').style.display='none';
+  const lbl=document.getElementById('c-btn-lbl');
+  lbl.innerHTML='<div class="spinner"></div>';
+
+  const tribMap = {
+    trf1: { nome:'TRF1 — 1ª Região', url:'https://processual.trf1.jus.br/consultaProcessual/processo.php' },
+    trf2: { nome:'TRF2 — 2ª Região', url:'https://portal.trf2.jus.br/portal/consulta/cons_proc.asp' },
+    trf3: { nome:'TRF3 — 3ª Região', url:'https://web.trf3.jus.br/base-textual' },
+    trf4: { nome:'TRF4 — 4ª Região', url:'https://www.trf4.jus.br/trf4/processos/acompanhamento/consulta_processual.php' },
+    trf5: { nome:'TRF5 — 5ª Região', url:'https://www.trf5.jus.br' },
+    trf6: { nome:'TRF6 — 6ª Região', url:'https://www.trf6.jus.br' },
+    stj:  { nome:'STJ', url:'https://processo.stj.jus.br/processo/pesquisa/' },
+    stf:  { nome:'STF', url:'https://portal.stf.jus.br/processos/' },
+  };
+  const tribInfo = tribMap[trib] || tribMap['trf1'];
+
+  // Etapa 1: Consulta real no portal do tribunal
+  let dadosReais = null;
+  try {
+    const rc = await fetch('/api/consulta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        cpf: cpf.replace(/\D/g,''),
+        nome,
+        tribunal: trib,
+        numProcesso: num || '',
+      }),
+    });
+    if (rc.ok) dadosReais = await rc.json();
+  } catch(e) {
+    console.warn('Consulta portal falhou:', e.message);
+  }
+
+  // Etapa 2: IA interpreta os dados reais + contexto UNASLAF
+  const resumoPortal = dadosReais?.resumo
+    ? `\nRESULTADO DA CONSULTA REAL NO PORTAL DO ${tribInfo.nome}:\n${dadosReais.resumo}\nURL consultada: ${dadosReais.portalUrl}`
+    : `\nNota: não foi possível consultar o portal do ${tribInfo.nome} diretamente (pode exigir autenticação ou CAPTCHA). Oriente o associado a acessar ${tribInfo.url} manualmente.`;
+
+  const prompt = `Você é um assistente jurídico especializado em processos da Justiça Federal brasileira.
+
+ASSOCIADO AUTENTICADO:
+- Nome: ${nome}
+- CPF: ${cpf}
+- Processo nº: ${num || 'não informado'}
+- Tribunal: ${tribInfo.nome}
+${resumoPortal}
+
+CONTEXTO UNASLAF — Ações coletivas:
+1. Adicional de Fronteira — 1022299-41.2018.4.01.3400 (TRF1) — mérito pendente
+2. Jornada/Abono de Ponto — MS 1024043-71.2018.4.01.3400 (TRF1)
+3. ADI 4151 — STF — VITÓRIA UNÂNIME 10x0 em abril/2026
+4. PASEP — 0727740-19.2020.8.07.0001 — improcedente (março/2026)
+
+Responda OBRIGATORIAMENTE começando com:
+"⚠️ Aviso: As informações fornecidas têm caráter orientativo e não oficial. Não substituem a consulta aos canais oficiais, a assessoria jurídica especializada ou as autoridades competentes."
+
+Depois responda em 3 blocos:
+1) Resultado da consulta: interprete os dados reais obtidos no portal (se houver) e como o perfil do associado se relaciona com as ações coletivas da UNASLAF
+2) Como consultar pessoalmente em: ${tribInfo.url} — informe o passo a passo para buscar pelo CPF e pelo CNPJ da UNASLAF (73.369.795/0001-83)
+3) Próximos passos — oriente a buscar o jurídico da UNASLAF para análise individual em unaslaf.org.br`;
+
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      system:CTX,
+      messages:[{role:'user',content:prompt}],
+      userName: user.name,
+      userCpf: user.cpfFmt,
+      baseUrl: window.location.origin,
+    })});
+    const d=await r.json();
+    document.getElementById('c-loading').style.display='none';
+    lbl.textContent='Consultar via IA';
+    document.getElementById('c-result').style.display='block';
+    document.getElementById('c-result-body').innerHTML=(d.content?.[0]?.text||'Sem resultado.').replace(/\n/g,'<br>');
+    addHist('cons','Consulta '+tribInfo.nome+': '+nome);
+  }catch(e){
+    document.getElementById('c-loading').style.display='none';
+    lbl.textContent='Consultar via IA';
+    toast('Erro na consulta. Tente novamente.','err');
+  }
+}
+
+// ── HISTÓRICO ────────────────────────────────────────────────
+function addHist(type,text){
+  hist.unshift({type,text,date:now()});
+  const tags={chat:'Chat',cad:'Cadastro',arq:'Arquivo',cons:'Consulta'};
+  document.getElementById('hist-list').innerHTML=hist.map(h=>`<div class="hist-row"><div class="hist-head"><span class="hist-tag ${h.type}">${tags[h.type]}</span><span class="hist-date">${h.date}</span></div><div class="hist-prev">${h.text}</div></div>`).join('');
+}
+
+// ── DOCUMENTOS ────────────────────────────────────────────────
+let todosDocumentos = [];
+
+async function loadDocumentos() {
+  if (todosDocumentos.length > 0) { renderDocumentos(todosDocumentos); return; }
+  document.getElementById('doc-loading').style.display = 'block';
+  document.getElementById('doc-list').style.display    = 'none';
+  document.getElementById('doc-empty').style.display   = 'none';
+  try {
+    const r = await fetch('/api/repositorio');
+    const d = await r.json();
+    if (d.success && d.files.length > 0) {
+      todosDocumentos = d.files;
+      const cnt = document.getElementById('doc-count');
+      cnt.textContent = `${d.total} arquivo${d.total!==1?'s':''}`;
+      cnt.style.display = 'inline-block';
+      renderDocumentos(todosDocumentos);
+    } else {
+      document.getElementById('doc-loading').style.display = 'none';
+      document.getElementById('doc-empty').style.display   = 'block';
+      document.getElementById('doc-empty').textContent     = 'Nenhum documento disponível ainda.';
+    }
+  } catch(e) {
+    document.getElementById('doc-loading').style.display = 'none';
+    document.getElementById('doc-empty').style.display   = 'block';
+    document.getElementById('doc-empty').textContent     = 'Erro ao carregar documentos. Tente novamente.';
+  }
+}
+
+function filterDocumentos() {
+  const q = document.getElementById('doc-search').value.toLowerCase().trim();
+  renderDocumentos(q ? todosDocumentos.filter(f =>
+    f.name.toLowerCase().includes(q) || f.categoria.toLowerCase().includes(q)
+  ) : todosDocumentos);
+}
+
+function renderDocumentos(files) {
+  document.getElementById('doc-loading').style.display = 'none';
+  if (!files.length) {
+    document.getElementById('doc-list').style.display  = 'none';
+    document.getElementById('doc-empty').style.display = 'block';
+    document.getElementById('doc-empty').textContent   = 'Nenhum documento encontrado.';
+    return;
+  }
+  document.getElementById('doc-empty').style.display = 'none';
+  document.getElementById('doc-list').style.display  = 'block';
+
+  const grupos = {};
+  files.forEach(f => {
+    if (!grupos[f.categoria]) grupos[f.categoria] = [];
+    grupos[f.categoria].push(f);
+  });
+
+  document.getElementById('doc-list').innerHTML = Object.entries(grupos).map(([cat, docs]) => `
+    <div class="doc-categoria">${cat}</div>
+    ${docs.map(f => `
+      <div class="doc-card">
+        <div class="doc-icon">${f.icon}</div>
+        <div class="doc-info">
+          <div class="doc-name" title="${f.name}">${f.name}</div>
+          <div class="doc-meta">${f.size} &nbsp;·&nbsp; Atualizado em ${f.modified}</div>
+        </div>
+        <a class="doc-download" href="${f.downloadUrl}" download="${f.name}">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M3 13h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Baixar
+        </a>
+      </div>`).join('')}
+  `).join('');
+}
+</script>
+</body>
+</html>
