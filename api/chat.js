@@ -3,100 +3,129 @@
 
 import { requireAuth } from './lib/auth.js';
 import { findByCPF } from './lib/sheets.js';
-import { findRelevantDocs } from './context-static.js';
+import { findRelevantDocs, buildContextString, isIndividualLookup } from './context-static.js';
 
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
-const MODEL = 'gpt-4o-mini';
+const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+const MAX_HISTORY = 10;
+const MAX_CONTEXT_DOCS = 8;
 
-// Palavras-chave que ativam busca web
-const WEB_TRIGGER = /not[ií]cia|recente|hoje|esta semana|novidade|atualiza[çc][aã]o/i;
+// Este endpoint responde com base na base estática da UNASLAF.
+// Para andamentos processuais em tempo real, a resposta deve orientar consulta aos canais oficiais.
+const REAL_TIME_TRIGGER = /\b(hoje|agora|recente|atual|atualizado|andamento|movimenta[cç][aã]o|di[aá]rio|dje|stf|trf|pje|eproc|publica[cç][aã]o)\b/i;
+
+function sanitizeHistory(history = []) {
+  return history
+    .filter(m => m && ['user', 'assistant'].includes(m.role) && typeof m.content === 'string')
+    .slice(-MAX_HISTORY)
+    .map(m => ({ role: m.role, content: m.content.slice(0, 4000) }));
+}
+
+function buildAssociadoBlock(associado, cpf) {
+  return `ASSOCIADO AUTENTICADO NESTA SESSÃO:\n` +
+    `- Nome: ${associado?.nome || 'Não identificado'}\n` +
+    `- CPF: ${cpf}\n` +
+    `- SIAPE: ${associado?.siape || associado?.matricula_siape || associado?.matricula || 'Não informado'}\n` +
+    `- Cargo: ${associado?.cargo || 'Não informado'}\n` +
+    `- Tipo: ${associado?.tipo || associado?.funcional || 'Não informado'}\n` +
+    `- Situação: ${associado?.situacao || 'Não informado'}\n` +
+    `- Órgão: ${associado?.orgao || 'Não informado'}`;
+}
+
+function buildSystemPrompt({ associado, cpf, contextStr, message }) {
+  const needsFreshnessWarning = REAL_TIME_TRIGGER.test(message);
+  const individualLookup = isIndividualLookup(message);
+
+  return `Você é o atendente virtual oficial da UNASLAF, associação nacional voltada à defesa institucional, administrativa e judicial dos servidores e pensionistas vinculados à extinta Secretaria da Receita Previdenciária, especialmente no contexto dos servidores redistribuídos à Receita Federal do Brasil.
+
+IDENTIDADE INSTITUCIONAL DA UNASLAF:
+- CNPJ: 73.369.795/0001-83
+- Sede: SCN-Qd.6-Bloco A, Ed. Venâncio 3000, 4º andar, salas 413/414, Brasília-DF
+- Site: https://unaslaf.org.br
+- E-mail institucional: unaslaf@unaslaf.org.br
+- Jurídico: juridico@unaslaf.org.br
+
+${buildAssociadoBlock(associado, cpf)}
+
+REGRAS GERAIS DE COMPORTAMENTO:
+[R1] Responda SEMPRE em português do Brasil, com tom cordial, institucional, objetivo e seguro.
+[R2] NUNCA prometa pagamento, prazo, implantação, êxito judicial, trânsito em julgado ou decisão administrativa futura.
+[R3] NUNCA dê parecer jurídico definitivo. Para caso concreto, orientar contato com o jurídico da UNASLAF.
+[R4] Quando o tema for ADI 4151, distinguir sempre: Analista do Seguro Social, Técnico do Seguro Social, ativo, aposentado, pensionista, redistribuído à RFB e optante pelo retorno ao INSS.
+[R5] Quando o tema for ação coletiva, informar que a base pode conter status históricos e que o andamento atual deve ser confirmado nos canais oficiais/processuais ou com a assessoria jurídica.
+[R6] Perguntas individuais como "tenho direito?", "estou na lista?", "meu CPF consta?": usar apenas os dados do associado autenticado e os documentos selecionados, mas nunca dar garantia jurídica ou conclusão definitiva.
+[R7] NUNCA divulgar listas completas de associados, CPFs, SIAPEs, beneficiários ou substituídos. Se houver lista interna no contexto, use apenas para conferência individual autenticada.
+[R8] Se o usuário pedir lista completa, base de CPFs, dados pessoais de terceiros ou exportação de beneficiários, recuse de forma educada e explique que a consulta só pode ser individual e autenticada.
+[R9] Havendo conflito entre documentos, priorize a informação mais recente, expressamente validada pela Diretoria/Jurídico; se não houver segurança, diga: "Com base nos documentos disponíveis...".
+[R10] Se a pergunta depender de movimentação processual em tempo real, diga que você não substitui a consulta aos sistemas oficiais e recomende confirmação no STF, TRF, PJe/eproc ou jurídico da UNASLAF.
+[R11] Não invente informação ausente da base. Quando a base não trouxer resposta suficiente, diga isso com clareza e indique o canal adequado.
+[R12] Seja breve por padrão. Use tópicos apenas quando facilitar a compreensão.
+
+REGRAS ESPECÍFICAS DE SIGILO E DADOS:
+- A autenticação por CPF existe para personalização e consulta individual; não autoriza expor dados de terceiros.
+- Não repita CPF completo do associado sem necessidade. Quando precisar mencionar, mascare parcialmente.
+- Não exiba listas internas completas, ainda que apareçam na base de conhecimento selecionada.
+- Não revele conteúdo interno sensível além do necessário para responder à dúvida do associado.
+
+AVISO OBRIGATÓRIO:
+Ao final de toda resposta que envolva direitos, processos, ADI 4151, ações coletivas, enquadramento, paridade, valores, implantação, listas ou situação individual, adicione discretamente:
+"⚠️ Informações de caráter orientativo. Confirme nos canais oficiais ou com o jurídico da UNASLAF."
+
+SINAIS INTERNOS DA PERGUNTA:
+- Pergunta parece individual/autenticada? ${individualLookup ? 'Sim' : 'Não'}
+- Pode depender de atualização em tempo real? ${needsFreshnessWarning ? 'Sim' : 'Não'}
+
+BASE DE CONHECIMENTO SELECIONADA PARA ESTA PERGUNTA:
+${contextStr || '(Nenhum documento específico foi selecionado. Responda apenas com orientações institucionais gerais e, se necessário, encaminhe aos canais oficiais.)'}`;
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
 
-  // Auth
   const cpf = await requireAuth(req, res);
   if (!cpf) return;
 
   try {
-    const { message, history = [] } = req.body;
-    if (!message) return res.status(400).json({ error: 'Mensagem obrigatória' });
+    if (!OPENAI_KEY) {
+      return res.status(500).json({ error: 'OPENAI_API_KEY não configurada' });
+    }
 
-    // Dados do associado para personalização
+    const { message, history = [] } = req.body || {};
+    if (!message || typeof message !== 'string') {
+      return res.status(400).json({ error: 'Mensagem obrigatória' });
+    }
+
     const associado = await findByCPF(cpf);
 
-    // RAG: seleciona documentos relevantes
-    const relevantDocs = findRelevantDocs(message);
-    const contextStr = relevantDocs
-      .map(d => `===== ${d.title.toUpperCase()} =====\n${d.content}`)
-      .join('\n\n');
+    const allowInternalLists = isIndividualLookup(message);
+    const relevantDocs = findRelevantDocs(message, MAX_CONTEXT_DOCS, { allowInternalLists });
+    const contextStr = buildContextString(relevantDocs);
 
-    // System prompt
-    const systemPrompt = `Você é o atendente virtual oficial da UNASLAF — União Nacional dos Analistas e Técnicos de Finanças e Controle.
+    const systemPrompt = buildSystemPrompt({ associado, cpf, contextStr, message });
 
-IDENTIDADE DA UNASLAF:
-- CNPJ: 73.369.795/0001-83
-- Sede: SCN-Qd.6-Bloco A, Ed. Venâncio 3000, 4º andar, salas 413/414, Brasília-DF
-- Site: https://unaslaf.org.br
-
-ASSOCIADO AUTENTICADO NESTA SESSÃO:
-- Nome: ${associado?.nome || 'Não identificado'}
-- CPF: ${cpf}
-- SIAPE: ${associado?.siape || 'Não informado'}
-- Cargo: ${associado?.cargo || 'Não informado'}
-- Tipo: ${associado?.tipo || 'Não informado'}
-- Situação: ${associado?.situacao || 'Não informado'}
-- Órgão: ${associado?.orgao || 'Não informado'}
-
-REGRAS DE COMPORTAMENTO:
-[R1] Responda SEMPRE em português do Brasil, tom cordial, institucional e seguro.
-[R2] NUNCA prometa pagamento, prazo, implantação ou vitória judicial.
-[R3] Para ADI 4151: distinga Analista x Técnico, ativo x aposentado x pensionista.
-[R4] Para ações coletivas: informe que os dados são de julho/2023 e recomende confirmação.
-[R5] Perguntas individuais ("tenho direito?", "estou na lista?"): use os dados do associado autenticado para verificar, mas nunca dê garantia jurídica.
-[R6] NUNCA divulgue a lista completa de associados.
-[R7] Orientação jurídica definitiva: encaminhe ao jurídico da UNASLAF (juridico@unaslaf.org.br).
-[R9] Conflito entre documentos: priorize a informação mais recente.
-[R10] Em dúvida: "Com base nos documentos disponíveis..." ou "O documento indica...".
-
-AVISO OBRIGATÓRIO: Ao final de toda resposta que envolva direitos, processos ou situações individuais, adicione discretamente: "⚠️ Informações de caráter orientativo. Confirme nos canais oficiais ou com o jurídico da UNASLAF."
-
-BASE DE CONHECIMENTO SELECIONADA PARA ESTA PERGUNTA:
-${contextStr || '(nenhum documento específico selecionado — responda com base no conhecimento institucional geral da UNASLAF)'}`;
-
-    // Monta histórico para a API
     const messages = [
       { role: 'system', content: systemPrompt },
-      ...history.slice(-10).map(m => ({
-        role: m.role,
-        content: m.content,
-      })),
-      { role: 'user', content: message },
+      ...sanitizeHistory(history),
+      { role: 'user', content: message.slice(0, 8000) },
     ];
 
-    // Ferramentas opcionais (busca web apenas se necessário)
-    const tools = WEB_TRIGGER.test(message) ? [{
-      type: 'web_search_20250305',
-      name: 'web_search',
-    }] : undefined;
-
-    // Chama OpenAI
     const payload = {
       model: MODEL,
-      max_tokens: 1500,
       messages,
-      ...(tools ? { tools } : {}),
+      temperature: 0.2,
+      max_tokens: 1500,
     };
 
     const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENAI_KEY}`,
+        Authorization: `Bearer ${OPENAI_KEY}`,
       },
       body: JSON.stringify(payload),
     });
@@ -107,10 +136,16 @@ ${contextStr || '(nenhum documento específico selecionado — responda com base
     }
 
     const data = await openaiRes.json();
-    const reply = data.choices?.[0]?.message?.content || 'Não foi possível gerar uma resposta.';
+    const reply = data.choices?.[0]?.message?.content?.trim() || 'Não foi possível gerar uma resposta.';
 
-    return res.status(200).json({ ok: true, reply });
-
+    return res.status(200).json({
+      ok: true,
+      reply,
+      meta: {
+        docs: relevantDocs.map(d => ({ id: d.id, title: d.title, category: d.category })),
+        requiresFreshnessConfirmation: REAL_TIME_TRIGGER.test(message),
+      },
+    });
   } catch (err) {
     console.error('[chat]', err);
     return res.status(500).json({ error: 'Erro ao processar mensagem', detail: err.message });
