@@ -692,26 +692,41 @@ function buildCadastroForm(ass) {
       <input id="f-email" type="email" value="${ass.email || ''}" placeholder="email@exemplo.com" />
     </div>
     <div class="field-row">
-      <label>WhatsApp *</label>
+      <label>Telefone / WhatsApp *</label>
       <input id="f-telefone" value="${ass.telefone || ''}" placeholder="55DDD9XXXXXXXX" />
     </div>
-    <div class="field-row span2">
-      <label>Endereço</label>
-      <input id="f-endereco" value="${ass.endereco || ''}" placeholder="Rua, número, complemento" />
+    <div class="field-row">
+      <label>Logradouro</label>
+      <input id="f-logradouro" value="${ass.logradouro || ''}" placeholder="Rua, Av., etc." />
+    </div>
+    <div class="field-row">
+      <label>Número</label>
+      <input id="f-numero" value="${ass.numero || ''}" placeholder="123" />
+    </div>
+    <div class="field-row">
+      <label>Complemento</label>
+      <input id="f-complemento" value="${ass.complemento || ''}" placeholder="Apto, Bloco, etc." />
+    </div>
+    <div class="field-row">
+      <label>Bairro</label>
+      <input id="f-bairro" value="${ass.bairro || ''}" placeholder="Bairro" />
     </div>
     <div class="field-row">
       <label>Cidade</label>
       <input id="f-cidade" value="${ass.cidade || ''}" placeholder="Cidade" />
     </div>
     <div class="field-row">
+      <label>CEP</label>
+      <input id="f-cep" value="${ass.cep || ''}" placeholder="00000-000" maxlength="9" />
+    </div>
+    <div class="field-row">
       <label>UF</label>
-      <input id="f-uf" value="${ass.uf || ''}" placeholder="SP" maxlength="2" />
+      <input id="f-uf" value="${ass.uf || ''}" placeholder="SP" maxlength="2" style="text-transform:uppercase" />
     </div>
   `;
   $('cadastro-actions').style.display = '';
   $('btn-save').disabled = false;
 
-  // Validação dos obrigatórios
   function checkRequired() {
     const ok = ['f-nome','f-email','f-telefone'].every(id => $(id)?.value.trim());
     $('btn-save').disabled = !ok;
@@ -746,12 +761,16 @@ $('btn-save').addEventListener('click', async () => {
     await api('/api/cadastro', {
       method: 'PATCH',
       body: JSON.stringify({
-        nome:     $('f-nome')?.value.trim(),
-        email:    $('f-email')?.value.trim(),
-        telefone: $('f-telefone')?.value.trim(),
-        endereco: $('f-endereco')?.value.trim(),
-        cidade:   $('f-cidade')?.value.trim(),
-        uf:       $('f-uf')?.value.trim(),
+        nome:        $('f-nome')?.value.trim(),
+        email:       $('f-email')?.value.trim(),
+        telefone:    $('f-telefone')?.value.trim(),
+        logradouro:  $('f-logradouro')?.value.trim(),
+        numero:      $('f-numero')?.value.trim(),
+        complemento: $('f-complemento')?.value.trim(),
+        bairro:      $('f-bairro')?.value.trim(),
+        cidade:      $('f-cidade')?.value.trim(),
+        cep:         $('f-cep')?.value.trim(),
+        uf:          $('f-uf')?.value.trim().toUpperCase(),
       }),
     });
     msg.className = 'save-msg ok';
