@@ -1,14 +1,19 @@
 // api/auth/request-code.js
 
 import { google } from 'googleapis';
-import { generateSessionToken } from '../lib/token.js';
 
 const SHEET_ID = '1M9H-RikQ-2ATA7MX8maOydbmzx7a1x2pu0sz6r9OJ4M';
 const MAIN_TAB = 'consolidado_app';
 
+function generateSessionToken(cpf) {
+  const secret = process.env.SESSION_SECRET || 'unaslaf-2026';
+  const payload = `${cpf}|${Date.now()}|${secret}`;
+  return Buffer.from(payload).toString('base64url');
+}
+
 function getSheetsClient() {
   const raw = process.env.GOOGLE_SERVICE_ACCOUNT;
-  if (!raw) throw new Error('GOOGLE_SERVICE_ACCOUNT não configurado');
+  if (!raw) throw new Error('GOOGLE_SERVICE_ACCOUNT nao configurado');
   const credentials = JSON.parse(raw);
   const auth = new google.auth.GoogleAuth({
     credentials,
@@ -22,19 +27,18 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo nao permitido' });
 
   try {
     const { cpf } = req.body || {};
     const cpfClean = (cpf || '').replace(/\D/g, '');
 
     if (!cpfClean || cpfClean.length !== 11) {
-      return res.status(400).json({ error: 'CPF inválido' });
+      return res.status(400).json({ error: 'CPF invalido' });
     }
 
     const sheets = getSheetsClient();
 
-    // Busca CPF nas colunas A:C
     const searchResult = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
       range: `${MAIN_TAB}!A:C`,
@@ -53,12 +57,11 @@ export default async function handler(req, res) {
 
     if (!rowIndex) {
       return res.status(404).json({
-        error: 'CPF não encontrado',
-        message: 'Este CPF não está cadastrado na base de associados da UNASLAF. Entre em contato pelo site unaslaf.org.br.',
+        error: 'CPF nao encontrado',
+        message: 'Este CPF nao esta cadastrado na base de associados da UNASLAF.',
       });
     }
 
-    // Busca dados completos da linha
     const lineResult = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
       range: `${MAIN_TAB}!A${rowIndex}:BL${rowIndex}`,
