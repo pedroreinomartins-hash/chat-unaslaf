@@ -1125,39 +1125,30 @@ PARTE 2 (registros 371 a 487):
 });
 
 DOCS.push({
-  id: 'CHAMADA EXTRA',
-  title: 'CHAMADA EXTRA',
-  category: 'CHAMADA EXTRA',
-  content: `CHAMADA EXTRA)
-A UNASLAF conclama seus associados ao senso de comprometimento e responsabilidade para assegurar a melhor representação possível aos interesses da categoria e garantir atuação plena e dedicada diante dos enfrentamentos e reflexos da Ação Direta de Inconstitucionalidade n.º 4.151, em trâmite no Supremo Tribunal Federal, especialmente por ocasião da fase de julgamento dos embargos de declaração.
+  id: 'contribuicao_extraordinaria',
+  title: 'Chamada Extra - Contribuição Extraordinária',
+  category: 'financeiro',
+  content: `CONTRIBUIÇÃO EXTRAORDINÁRIA (CHAMADA EXTRA)
 
-A necessidade de reforçar a equipe responsável pelo acompanhamento do julgamento se torna ainda mais evidente diante da recente retirada de pauta, ocasião em que se verificou a presença de peso da Advocacia-Geral da União, devidamente articulada com o apoio da Conjur/MGI.
+OBJETIVO:
+Manutenção dos trabalhos da entidade e fortalecimento da equipe técnica para atuação na Suprema Corte (STF).
 
-Esse cenário demonstra que, mais do que apresentar petições e memoriais, é imprescindível assegurar que a UNASLAF disponha de uma equipe jurídica com estatura equivalente — técnica, estratégica e com maior alcance institucional — para fazer frente ao nível de articulação observado.
+VALORES DEFINIDOS:
+- Dezembro: R$ 300,00 (trezentos reais)
+- Janeiro: R$ 200,00 (duzentos reais)
 
-Com esse propósito, comunicamos a abertura de uma contribuição extraordinária, destinada exclusivamente à manutenção dos trabalhos da entidade.
+ANTECIPAÇÃO:
+O associado pode autorizar o adiantamento integral ou parcial da primeira parcela (R$ 300,00) ainda no mês de novembro.
 
-Conforme anunciado em videoconferência com os associados, os valores definidos são os seguintes:
-
-R$ 300,00 (trezentos reais) – mês de dezembro;
-R$ 200,00 (duzentos reais) – mês de janeiro.
-Para permitir a continuidade imediata dos trabalhos e o fortalecimento tempestivo da equipe, o associado poderá autorizar o adiantamento integral ou parcial da primeira parcela (R$ 300,00) ainda no mês de novembro, conforme sua disponibilidade.
-
-Dados para pagamento:
+DADOS PARA PAGAMENTO:
 Banco do Brasil
 Agência: 0452-9
 Conta Corrente: 201050-0
 PIX: unaslaf@unaslaf.org.br
 Razão Social: Associação Nacional dos Servidores da Secretaria da Receita Previdenciária
 
-IMPORTANTE: O comprovante do depósito deve ser enviado para o e-mail da UNASLAF comprovante@unaslaf.org.br
-
- 
-
-A participação de cada associado é fundamental para que a UNASLAF sustente atuação técnica de alto nível, afinada com a complexidade do processo e à altura das forças institucionais que se manifestam na Suprema Corte.
-
-Agradecemos o comprometimento e a responsabilidade de todos.
-
+IMPORTANTE: 
+O comprovante do depósito deve ser enviado para o e-mail: comprovante@unaslaf.org.br`
 });
 // =============================================================================
 // FIM DO ARQUIVO
