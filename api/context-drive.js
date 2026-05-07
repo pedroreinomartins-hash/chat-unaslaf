@@ -20,8 +20,35 @@
 
 import { google } from 'googleapis';
 
-const FOLDER_ID      = process.env.CONTEXT_FOLDER_ID || '1V9tGV_mR7_c0xNr4TOR1LoYbMX5dbJPu';
+const FOLDER_ID        = process.env.CONTEXT_FOLDER_ID || '1V9tGV_mR7_c0xNr4TOR1LoYbMX5dbJPu';
 const DRIVE_CHAR_LIMIT = 12000; // ← aumente se precisar de mais contexto do Drive
+
+// =============================================================================
+// CACHE EM MEMÓRIA
+// =============================================================================
+// Evita consultar o Drive a cada mensagem do chat.
+// O conteúdo é reutilizado por CACHE_TTL_MS milissegundos (padrão: 5 minutos).
+//
+// COMO AJUSTAR:
+//   5 * 60 * 1000  =  5 minutos (padrão) — bom equilíbrio entre velocidade e frescor
+//   1 * 60 * 1000  =  1 minuto  — mais atualizado, um pouco mais lento
+//  10 * 60 * 1000  = 10 minutos — mais rápido, demora mais para refletir mudanças
+//
+// EFEITO PRÁTICO: após fazer upload de um arquivo novo na pasta do Drive,
+// ele será lido pelo chat após no máximo CACHE_TTL_MS milissegundos.
+// =============================================================================
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
+
+let _cache = {
+  context: '',   // texto concatenado dos arquivos do Drive
+  files: [],     // lista de nomes de arquivos lidos
+  ts: 0,         // timestamp da última leitura
+};
+
+function isCacheValid() {
+  return _cache.ts > 0 && (Date.now() - _cache.ts) < CACHE_TTL_MS;
+}
 
 function getDriveClient() {
   const raw = process.env.GOOGLE_SERVICE_ACCOUNT;
@@ -88,6 +115,11 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Método não permitido' });
 
+  // Retorna do cache se ainda válido — evita chamar o Drive a cada mensagem
+  if (isCacheValid()) {
+    return res.status(200).json({ context: _cache.context, files: _cache.files, cached: true });
+  }
+
   try {
     const drive = getDriveClient();
 
@@ -131,15 +163,20 @@ export default async function handler(req, res) {
     }
 
     const context = parts.join('\n\n').slice(0, DRIVE_CHAR_LIMIT);
+    const fileNames = files.map(f => f.name);
 
-    return res.status(200).json({
-      context,
-      files: files.map(f => f.name),
-    });
+    // Salva no cache
+    _cache = { context, files: fileNames, ts: Date.now() };
+
+    return res.status(200).json({ context, files: fileNames, cached: false });
 
   } catch (err) {
     console.error('[context-drive]', err.message);
-    // Retorna vazio em vez de erro — chat funciona sem o Drive
+    // Em caso de erro, retorna o cache anterior se existir (mesmo expirado)
+    if (_cache.context) {
+      return res.status(200).json({ context: _cache.context, files: _cache.files, cached: true, error: err.message });
+    }
+    // Sem cache e sem Drive — retorna vazio, chat funciona normalmente
     return res.status(200).json({ context: '', files: [], error: err.message });
   }
 }
