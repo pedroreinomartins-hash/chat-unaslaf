@@ -18,8 +18,6 @@ const DOCS = [];
 // - Mantenha linguagem simples — este conteúdo é explicado ao usuário final.
 // =============================================================================
 
-
-
 DOCS.push({
   id: 'app_funcionalidades',
   title: 'Funcionalidades do App UNASLAF e Canais de Atendimento',
@@ -1125,10 +1123,6 @@ PARTE 2 (registros 371 a 487):
 });
 
 
-
-
-
-});
 // =============================================================================
 // FIM DO ARQUIVO
 // Para adicionar novo documento, insira acima desta linha:
