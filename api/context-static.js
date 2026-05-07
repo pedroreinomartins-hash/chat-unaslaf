@@ -1125,6 +1125,36 @@ PARTE 2 (registros 371 a 487):
 });
 
 
+DOCS.push({
+  id: 'contribuicao_extraordinaria',
+  title: 'Chamada Extra - Contribuição Extraordinária',
+  category: 'financeiro',
+  content: `CONTRIBUIÇÃO EXTRAORDINÁRIA (CHAMADA EXTRA)
+
+OBJETIVO:
+Manutenção dos trabalhos da entidade e fortalecimento da equipe técnica para atuação na Suprema Corte (STF).
+
+VALORES DEFINIDOS:
+- Dezembro: R$ 300,00 (trezentos reais)
+- Janeiro: R$ 200,00 (duzentos reais)
+
+ANTECIPAÇÃO:
+O associado pode autorizar o adiantamento integral ou parcial da primeira parcela (R$ 300,00) ainda no mês de novembro.
+
+DADOS PARA PAGAMENTO:
+Banco do Brasil
+Agência: 0452-9
+Conta Corrente: 201050-0
+PIX: unaslaf@unaslaf.org.br
+Razão Social: Associação Nacional dos Servidores da Secretaria da Receita Previdenciária
+
+IMPORTANTE: 
+O comprovante do depósito deve ser enviado para o e-mail: comprovante@unaslaf.org.br`
+});
+
+
+
+
 });
 // =============================================================================
 // FIM DO ARQUIVO
