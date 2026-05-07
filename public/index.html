@@ -615,17 +615,39 @@ $('btn-logout').addEventListener('click', () => {
 // ════════════════════════════════════════════════════════════════════════
 // CHAT
 // ════════════════════════════════════════════════════════════════════════
+// Converte Markdown simples em HTML (links, negrito, listas, quebras de linha)
+function markdownToHtml(text) {
+  return text
+    // Links: [texto](url)
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">$1</a>')
+    // Links mailto: [email](mailto:...)
+    .replace(/\[([^\]]+)\]\((mailto:[^\)]+)\)/g, '<a href="$2" style="color:var(--green);text-decoration:underline;">$1</a>')
+    // URLs soltas (não dentro de markdown)
+    .replace(/(?<!\()https?:\/\/[^\s<>"]+/g, url => `<a href="${url}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">${url}</a>`)
+    // Negrito: **texto**
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    // Itálico: *texto*
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    // Linha horizontal: ---
+    .replace(/^---+$/gm, '<hr style="border:none;border-top:1px solid var(--border);margin:8px 0;">')
+    // Itens de lista: - item ou • item
+    .replace(/^[\-•]\s+(.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs, '<ul style="margin:6px 0 6px 16px;padding:0;">$1</ul>')
+    // Quebras de linha
+    .replace(/\n/g, '<br>');
+}
+
 function appendMsg(role, html, isTyping = false) {
   const msgs = $('chat-messages');
   const div = document.createElement('div');
   div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
   if (isTyping) div.id = 'typing-indicator';
+  const rendered = isTyping
+    ? '<div class="typing-bubble"><span></span><span></span><span></span></div>'
+    : (role === 'user' ? html.replace(/\n/g, '<br>') : markdownToHtml(html));
   div.innerHTML = `
     <div class="msg-label">${role === 'user' ? 'Você' : 'Atendente UNASLAF'}</div>
-    <div class="msg-bubble">${isTyping
-      ? '<div class="typing-bubble"><span></span><span></span><span></span></div>'
-      : html.replace(/\n/g,'<br>') }
-    </div>`;
+    <div class="msg-bubble">${rendered}</div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
   return div;
@@ -650,8 +672,9 @@ async function sendChat(text) {
       body: JSON.stringify({ message: text, history: state.chatHistory }),
     });
     $('typing-indicator')?.remove();
-    appendMsg('ai', data.reply);
-    state.chatHistory.push({ role: 'assistant', content: data.reply });
+    const reply = data.reply || data.content?.[0]?.text || 'Não foi possível gerar uma resposta.';
+    appendMsg('ai', reply);
+    state.chatHistory.push({ role: 'assistant', content: reply });
   } catch (err) {
     $('typing-indicator')?.remove();
     appendMsg('ai', '⚠️ Não consegui processar sua mensagem. Por favor, tente novamente.');
