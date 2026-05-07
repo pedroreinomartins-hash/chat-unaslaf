@@ -4,6 +4,99 @@
 
 const DOCS = [];
 
+
+// =============================================================================
+// SEÇÃO 0 — FUNCIONALIDADES DO APP E CANAIS DE ATENDIMENTO
+// =============================================================================
+// Descreve o próprio sistema para que a IA explique ao associado como usar
+// o app, o que cada tela faz e quais documentos estão disponíveis.
+//
+// COMO EDITAR:
+// - Se adicionar nova tela ou funcionalidade ao app, descreva-a aqui.
+// - Se novos documentos forem adicionados ao repositório, liste-os abaixo
+//   em "DOCUMENTOS DISPONÍVEIS" para que a IA possa orientar o associado.
+// - Mantenha linguagem simples — este conteúdo é explicado ao usuário final.
+// =============================================================================
+
+DOCS.push({
+  id: 'app_funcionalidades',
+  title: 'Funcionalidades do App UNASLAF e Canais de Atendimento',
+  category: 'app',
+  content: `GUIA DO APP UNASLAF — ATENDENTE VIRTUAL DO ASSOCIADO
+
+O App UNASLAF é o sistema digital da associação, acessível pelo navegador
+em computador ou celular.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CANAIS DE ATENDIMENTO UNASLAF
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Este chat (atendimento imediato via IA — disponível neste app)
+- Site oficial: https://unaslaf.org.br
+- E-mail geral: unaslaf@unaslaf.org.br
+- Jurídico: juridico@unaslaf.org.br
+- Sede: SCN-Qd.6-Bloco A, Ed. Venâncio 3000, 4º andar, salas 413/414, Brasília-DF
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COMO ACESSAR O APP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Acesse o link do app no navegador (celular ou computador).
+- Informe seu CPF cadastrado na UNASLAF (com ou sem pontuação).
+- Se o CPF estiver cadastrado, o acesso é liberado automaticamente.
+- Não há senha — o CPF é a chave de acesso.
+- Se o CPF não for reconhecido: entre em contato pelo site unaslaf.org.br.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TELA 1 — ATENDIMENTO (este chat)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Canal de atendimento imediato via inteligência artificial.
+- Responde dúvidas sobre estatuto, ações coletivas, ADI 4151,
+  portarias, filiação, direitos dos associados e funcionamento do app.
+- Atalhos rápidos (chips): botões com os temas mais consultados.
+- As respostas têm caráter orientativo. Para situações individuais
+  ou jurídicas: juridico@unaslaf.org.br
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TELA 2 — MEU CADASTRO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Permite visualizar e atualizar dados cadastrais.
+- Campos editáveis: Nome, Aposentado (Sim/Não), E-mail,
+  Telefone/WhatsApp, Logradouro, Número, Complemento,
+  Bairro, Cidade, CEP, UF.
+- Campos somente leitura (não alteráveis pelo associado): CPF e SIAPE.
+- Obrigatórios para salvar: Nome, E-mail e Telefone.
+- Campos opcionais vazios não apagam dados já existentes.
+- Toda alteração é registrada com data e hora no histórico interno.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TELA 3 — DOCUMENTOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Repositório de documentos oficiais da UNASLAF para download.
+- Busca por nome ou filtro por categoria.
+- Categorias: Filiação, Desfiliação, Procuração, Requerimentos,
+  Formulários, Geral.
+- Para baixar: clique em "Baixar" ao lado do documento.
+- Documentos atualizados automaticamente quando a UNASLAF
+  adiciona novos arquivos — sem necessidade de atualizar o app.
+
+DOCUMENTOS DISPONÍVEIS PARA DOWNLOAD:
+(liste abaixo os arquivos disponíveis no repositório — atualize conforme necessário)
+- Ficha de Filiação
+- Formulário de Desfiliação / Cancelamento
+- Procuração para representação
+- Requerimentos diversos
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEGURANÇA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Acesso restrito a associados com CPF cadastrado.
+- Comunicações criptografadas (HTTPS).
+- Sessão expira automaticamente após 8 horas.
+- Histórico de alterações cadastrais registrado internamente.
+`
+});
+
+
+
 function normalizeText(value = '') {
   return String(value)
     .toLowerCase()
