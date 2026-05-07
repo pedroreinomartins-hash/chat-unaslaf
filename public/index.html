@@ -621,82 +621,78 @@ $('btn-logout').addEventListener('click', () => {
 // ════════════════════════════════════════════════════════════════════════
 // CHAT
 // ════════════════════════════════════════════════════════════════════════
-// Converte Markdown simples em HTML (links, negrito, listas, quebras de linha)
-// ORDEM IMPORTA: links Markdown primeiro, depois URLs soltas, depois o resto
+// Converte Markdown simples em HTML (links, negrito, listas, botões de documento)
 function markdownToHtml(text) {
-  // Passo 0: detecta [DOCUMENTO:nome] e substitui por botão de download
-  result = result.replace(/\[DOCUMENTO:([^\]]+)\]/g, (_, fileName) => {
-    // Busca o arquivo na lista pelo nome (tolerante a maiúsculas/espaços)
-    const norm = s => s.toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
-    const file = state.docs.find(f => norm(f.name).includes(norm(fileName)) || norm(fileName).includes(norm(f.name)));
-    if (file) {
-      return `<div style="margin:8px 0;">
-        <button onclick="downloadDoc('${file.downloadUrl}','${file.name.replace(/'/g,"\'")}')"
-          style="display:inline-flex;align-items:center;gap:8px;background:var(--green-pale);
-          color:var(--green);border:1.5px solid #b6dfca;border-radius:10px;
-          padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;
-          transition:background .2s,color .2s;"
-          onmouseover="this.style.background='var(--green)';this.style.color='white'"
-          onmouseout="this.style.background='var(--green-pale)';this.style.color='var(--green)'">
-          ⬇ Baixar — ${file.name}
-        </button>
-      </div>`;
+  const linkMap = [];
+
+  // Passo 0: detecta [DOCUMENTO:nome] e gera botão de download
+  // Feito antes dos outros passos para não confundir com links Markdown
+  let result = text.replace(/\[DOCUMENTO:([^\]]+)\]/g, function(_, fileName) {
+    var norm = function(s) { return s.toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,''); };
+    var normName = norm(fileName);
+    var file = null;
+    for (var i = 0; i < state.docs.length; i++) {
+      var n = norm(state.docs[i].name);
+      if (n.indexOf(normName) !== -1 || normName.indexOf(n) !== -1) {
+        file = state.docs[i]; break;
+      }
     }
-    // Arquivo não encontrado na lista — mostra orientação para tela Documentos
-    return `<div style="margin:8px 0;padding:10px 14px;background:var(--warn-bg);
-      border:1px solid var(--warn-border);border-radius:10px;font-size:13px;color:#7a6000;">
-      📄 Documento "<strong>${fileName}</strong>" — acesse a tela <strong>Documentos</strong> do app para localizar e baixar.
-    </div>`;
+    var placeholder = '\x00DOC' + linkMap.length + '\x00';
+    if (file) {
+      var url = file.downloadUrl;
+      var name = file.name.replace(/"/g, '&quot;');
+      linkMap.push(
+        '<div style="margin:8px 0;">' +
+        '<button onclick="downloadDoc(\'' + url + '\',\'' + name + '\')" ' +
+        'style="display:inline-flex;align-items:center;gap:8px;background:var(--green-pale);' +
+        'color:var(--green);border:1.5px solid #b6dfca;border-radius:10px;' +
+        'padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;" ' +
+        'onmouseover="this.style.background=\'var(--green)\';this.style.color=\'white\'" ' +
+        'onmouseout="this.style.background=\'var(--green-pale)\';this.style.color=\'var(--green)\'">'+
+        '&#x2B07; Baixar &mdash; ' + name +
+        '</button></div>'
+      );
+    } else {
+      linkMap.push(
+        '<div style="margin:8px 0;padding:10px 14px;background:var(--warn-bg);' +
+        'border:1px solid var(--warn-border);border-radius:10px;font-size:13px;color:#7a6000;">' +
+        '&#x1F4C4; Documento <strong>' + fileName + '</strong> &mdash; ' +
+        'acesse a tela <strong>Documentos</strong> do app para localizar e baixar.</div>'
+      );
+    }
+    return placeholder;
   });
 
-  // Passo 1: substitui links Markdown [texto](url) por placeholder temporário
-  // para evitar que a regex de URLs soltas quebre os links já processados
-  const linkMap = [];
-  let result = text
-
-    // Links Markdown com http/https: [texto](https://...)
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, label, url) => {
-      const html = `<a href="${url}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">${label}</a>`;
-      linkMap.push(html);
-      return `\x00LINK${linkMap.length - 1}\x00`;
+  // Passo 1: substitui links Markdown por placeholders
+  result = result
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, function(_, label, url) {
+      var html = '<a href="' + url + '" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">' + label + '</a>';
+      linkMap.push(html); return '\x00LINK' + (linkMap.length-1) + '\x00';
     })
-
-    // Links Markdown mailto: [email](mailto:...)
-    .replace(/\[([^\]]+)\]\((mailto:[^)]+)\)/g, (_, label, url) => {
-      const html = `<a href="${url}" style="color:var(--green);text-decoration:underline;">${label}</a>`;
-      linkMap.push(html);
-      return `\x00LINK${linkMap.length - 1}\x00`;
+    .replace(/\[([^\]]+)\]\((mailto:[^)]+)\)/g, function(_, label, url) {
+      var html = '<a href="' + url + '" style="color:var(--green);text-decoration:underline;">' + label + '</a>';
+      linkMap.push(html); return '\x00LINK' + (linkMap.length-1) + '\x00';
     })
+    // URLs soltas
+    .replace(/https?:\/\/[^\s<>")\x00]+/g, function(url) {
+      var html = '<a href="' + url + '" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">' + url + '</a>';
+      linkMap.push(html); return '\x00LINK' + (linkMap.length-1) + '\x00';
+    });
 
-    // URLs soltas (apenas as que não estão dentro de um placeholder)
-    .replace(/https?:\/\/[^\s<>")\x00]+/g, url => {
-      const html = `<a href="${url}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">${url}</a>`;
-      linkMap.push(html);
-      return `\x00LINK${linkMap.length - 1}\x00`;
-    })
-
-    // Negrito: **texto**
+  // Passo 2: restante do Markdown
+  result = result
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-
-    // Itálico: *texto* (apenas se não for **negrito**)
-    .replace(/(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
-
-    // Linha horizontal: ---
+    .replace(/(?<!\*)\*(?!\*)([^*\n]+)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
     .replace(/^---+$/gm, '<hr style="border:none;border-top:1px solid var(--border);margin:8px 0;">')
-
-    // Itens de lista: - item ou • item
     .replace(/^[\-•]\s+(.+)$/gm, '<li style="margin:2px 0;">$1</li>')
-    .replace(/(<li[^>]*>.*?<\/li>\n?)+/gs, match => `<ul style="margin:6px 0 6px 16px;padding:0;">${match}</ul>`)
-
-    // Quebras de linha
+    .replace(/(<li[^>]*>.*?<\/li>\n?)+/gs, function(m) { return '<ul style="margin:6px 0 6px 16px;padding:0;">' + m + '</ul>'; })
     .replace(/\n/g, '<br>');
 
-  // Passo 2: restaura os links dos placeholders
-  result = result.replace(/\x00LINK(\d+)\x00/g, (_, i) => linkMap[Number(i)]);
+  // Passo 3: restaura todos os placeholders
+  result = result.replace(/\x00(?:DOC|LINK)(\d+)\x00/g, function(_, i) { return linkMap[Number(i)]; });
 
   return result;
 }
-
 function appendMsg(role, html, isTyping = false) {
   const msgs = $('chat-messages');
   const div = document.createElement('div');
