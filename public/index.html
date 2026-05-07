@@ -616,25 +616,54 @@ $('btn-logout').addEventListener('click', () => {
 // CHAT
 // ════════════════════════════════════════════════════════════════════════
 // Converte Markdown simples em HTML (links, negrito, listas, quebras de linha)
+// ORDEM IMPORTA: links Markdown primeiro, depois URLs soltas, depois o resto
 function markdownToHtml(text) {
-  return text
-    // Links: [texto](url)
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">$1</a>')
-    // Links mailto: [email](mailto:...)
-    .replace(/\[([^\]]+)\]\((mailto:[^\)]+)\)/g, '<a href="$2" style="color:var(--green);text-decoration:underline;">$1</a>')
-    // URLs soltas (não dentro de markdown)
-    .replace(/(?<!\()https?:\/\/[^\s<>"]+/g, url => `<a href="${url}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">${url}</a>`)
+  // Passo 1: substitui links Markdown [texto](url) por placeholder temporário
+  // para evitar que a regex de URLs soltas quebre os links já processados
+  const linkMap = [];
+  let result = text
+
+    // Links Markdown com http/https: [texto](https://...)
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, label, url) => {
+      const html = `<a href="${url}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">${label}</a>`;
+      linkMap.push(html);
+      return `\x00LINK${linkMap.length - 1}\x00`;
+    })
+
+    // Links Markdown mailto: [email](mailto:...)
+    .replace(/\[([^\]]+)\]\((mailto:[^)]+)\)/g, (_, label, url) => {
+      const html = `<a href="${url}" style="color:var(--green);text-decoration:underline;">${label}</a>`;
+      linkMap.push(html);
+      return `\x00LINK${linkMap.length - 1}\x00`;
+    })
+
+    // URLs soltas (apenas as que não estão dentro de um placeholder)
+    .replace(/https?:\/\/[^\s<>")\x00]+/g, url => {
+      const html = `<a href="${url}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">${url}</a>`;
+      linkMap.push(html);
+      return `\x00LINK${linkMap.length - 1}\x00`;
+    })
+
     // Negrito: **texto**
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    // Itálico: *texto*
-    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+
+    // Itálico: *texto* (apenas se não for **negrito**)
+    .replace(/(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+
     // Linha horizontal: ---
     .replace(/^---+$/gm, '<hr style="border:none;border-top:1px solid var(--border);margin:8px 0;">')
+
     // Itens de lista: - item ou • item
-    .replace(/^[\-•]\s+(.+)$/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/gs, '<ul style="margin:6px 0 6px 16px;padding:0;">$1</ul>')
+    .replace(/^[\-•]\s+(.+)$/gm, '<li style="margin:2px 0;">$1</li>')
+    .replace(/(<li[^>]*>.*?<\/li>\n?)+/gs, match => `<ul style="margin:6px 0 6px 16px;padding:0;">${match}</ul>`)
+
     // Quebras de linha
     .replace(/\n/g, '<br>');
+
+  // Passo 2: restaura os links dos placeholders
+  result = result.replace(/\x00LINK(\d+)\x00/g, (_, i) => linkMap[Number(i)]);
+
+  return result;
 }
 
 function appendMsg(role, html, isTyping = false) {
