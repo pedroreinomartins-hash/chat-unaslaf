@@ -78,12 +78,19 @@ TELA 3 — DOCUMENTOS
 - Documentos atualizados automaticamente quando a UNASLAF
   adiciona novos arquivos — sem necessidade de atualizar o app.
 
-DOCUMENTOS DISPONÍVEIS PARA DOWNLOAD:
-(liste abaixo os arquivos disponíveis no repositório — atualize conforme necessário)
-- Ficha de Filiação
-- Formulário de Desfiliação / Cancelamento
-- Procuração para representação
-- Requerimentos diversos
+DOCUMENTOS DISPONÍVEIS PARA DOWNLOAD NO APP:
+Os documentos estão na tela "Documentos" do app e podem ser enviados diretamente
+no chat quando o associado solicitar. Para enviar no chat, use o bloco:
+[DOCUMENTO:nome-exato-do-arquivo.pdf]
+
+Arquivos típicos disponíveis (confirme os nomes na tela Documentos):
+- Ficha de Filiação → [DOCUMENTO:Ficha de Filiação.pdf]
+- Formulário de Desfiliação → [DOCUMENTO:Desfiliação.pdf]
+- Procuração → [DOCUMENTO:Procuração.pdf]
+- Requerimentos → [DOCUMENTO:Requerimento.pdf]
+
+IMPORTANTE: use o nome mais próximo ao que estiver no repositório.
+Se o nome exato não for conhecido, oriente o associado a buscar na tela Documentos.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SEGURANÇA
