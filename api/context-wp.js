@@ -34,7 +34,7 @@ const VETORES_FILE_ID = process.env.WP_VETORES_FILE_ID || '1CseqB3VUC3I91lOwb1gl
 const TOP_N          = 3;
 const CACHE_TTL_MS   = 30 * 60 * 1000; // 30 minutos
 const MIN_SIMILARITY = 0.75;            // ← abaixe para retornar mais artigos, suba para ser mais seletivo
-const MAX_CHARS_ART  = 1500;            // ← aumente para enviar mais contexto por artigo
+const MAX_CHARS_ART  = 3000;            // ← aumente para enviar mais contexto por artigo
 const EMBED_MODEL    = 'text-embedding-ada-002'; // mesmo modelo usado no script Python
 
 // Cache em memória
