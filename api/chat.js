@@ -47,6 +47,16 @@ const REAL_TIME_TRIGGER = /\b(hoje|agora|recente|atual|atualizado|andamento|movi
 // =============================================================================
 
 function buildSystemPrompt({ associado, cpf, contextStr, wpContext, driveContext, message }) {
+  // Data e hora atual no fuso de Brasília — recalculada a cada mensagem
+  const agora = new Date().toLocaleString('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
   const needsFreshnessWarning = REAL_TIME_TRIGGER.test(message);
   const individualLookup = isIndividualLookup(message);
 
@@ -67,6 +77,7 @@ IDENTIDADE INSTITUCIONAL:
 - Sede: SCN-Qd.6-Bloco A, Ed. Venâncio 3000, 4º andar, salas 413/414, Brasília-DF
 - Site: https://unaslaf.org.br
 - E-mail geral: unaslaf@unaslaf.org.br
+- Data e hora atual (Brasília): ${agora}
 - Jurídico: juridico@unaslaf.org.br
 
 ASSOCIADO AUTENTICADO NESTA SESSÃO:
@@ -81,6 +92,7 @@ CANAIS DE ATENDIMENTO DA UNASLAF:
 - Este chat (atendimento imediato via IA, disponível no app)
 - Site: https://unaslaf.org.br
 - E-mail geral: unaslaf@unaslaf.org.br
+- Data e hora atual (Brasília): ${agora}
 - Jurídico: juridico@unaslaf.org.br
 
 FUNCIONALIDADES DISPONÍVEIS NESTE APP:
