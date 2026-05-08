@@ -1,53 +1,45 @@
 // api/context-wp.js
 // =============================================================================
-// Base de Conhecimento WordPress — 461 artigos do site unaslaf.org.br
+// Base de Conhecimento WordPress — busca semântica por embeddings
 // =============================================================================
 // COMO FUNCIONA:
-//   1. Na primeira chamada, baixa os dois JSONs do Google Drive e faz cache
-//   2. Para cada pergunta, busca no índice invertido as palavras-chave
-//   3. Retorna o texto dos 3 artigos mais relevantes para o chat
+//   1. Na primeira chamada, baixa artigos_com_vetores.json do Drive (cache 30min)
+//   2. Gera embedding da pergunta via OpenAI (~200ms, custo desprezível)
+//   3. Calcula similaridade coseno entre a pergunta e os 436 artigos
+//   4. Retorna o texto dos TOP_N artigos mais relevantes para o chat
 //
-// OS ARQUIVOS NO DRIVE:
-//   artigos_limpos.json  → ID: 1VwSQDGW1Cut8RN2_Zyim9AZ_PCSuLm_D
-//   indice_busca.json    → ID: 1ldmIEd-03-wVX7hNlpsb-72H-4_CwXNF
+// ARQUIVO NO DRIVE:
+//   artigos_com_vetores.json → ID: 1CseqB3VUC3I91lOwb1glJDaATkAjco5-
+//   Campos: titulo, link, texto, vetor (1536 dimensões)
 //
 // COMO ATUALIZAR OS ARTIGOS:
-//   1. Gere novos artigos_limpos.json e indice_busca.json com o script Python
-//   2. Substitua os arquivos na pasta do Drive (mesmo nome)
-//   3. O cache expira em 30 minutos — após isso o sistema usa a versão nova
+//   1. Rode o script Python novamente para gerar novo artigos_com_vetores.json
+//   2. Substitua o arquivo no Drive (mesmo nome)
+//   3. O cache expira em 30 min — após isso o sistema usa a versão nova
 //
 // AJUSTES POSSÍVEIS:
-//   TOP_N_ARTIGOS  → quantos artigos são enviados à IA por pergunta (padrão: 3)
+//   TOP_N          → quantos artigos são enviados à IA por pergunta (padrão: 3)
 //   CACHE_TTL_MS   → tempo de cache em ms (padrão: 30 min)
-//   MIN_SCORE      → pontuação mínima para incluir um artigo (padrão: 1)
+//   MIN_SIMILARITY → similaridade mínima para incluir artigo (0 a 1, padrão: 0.75)
 //   MAX_CHARS_ART  → máximo de caracteres por artigo enviado à IA (padrão: 1500)
+//   EMBED_MODEL    → modelo de embedding da OpenAI (deve ser o mesmo usado no script Python)
 // =============================================================================
 
 import { google } from 'googleapis';
 
-// IDs dos arquivos no Google Drive
-const ARTIGOS_FILE_ID = process.env.WP_ARTICLES_FILE_ID || '1VwSQDGW1Cut8RN2_Zyim9AZ_PCSuLm_D';
-const INDICE_FILE_ID  = process.env.WP_INDEX_FILE_ID    || '1ldmIEd-03-wVX7hNlpsb-72H-4_CwXNF';
+// ID do arquivo no Google Drive
+const VETORES_FILE_ID = process.env.WP_VETORES_FILE_ID || '1CseqB3VUC3I91lOwb1glJDaATkAjco5-';
 
-// Configurações de busca
-const TOP_N_ARTIGOS = 3;     // artigos retornados por pergunta
-const CACHE_TTL_MS  = 30 * 60 * 1000; // 30 minutos
-const MIN_SCORE     = 1;     // pontuação mínima para incluir artigo
-const MAX_CHARS_ART = 1500;  // caracteres máximos por artigo
-
-// Stopwords — palavras ignoradas na busca (muito comuns, sem valor semântico)
-const STOPWORDS = new Set([
-  'para','como','qual','quais','quando','onde','quem','mais','esse','essa',
-  'isto','isso','pelo','pela','pelos','pelas','sobre','está','foram','será',
-  'seria','tinha','tenho','temos','pode','podem','deve','devem','isso','aqui',
-  'assim','também','desde','entre','ainda','cada','todo','toda','todos','todas',
-  'numa','numa','pelo','pela','seus','suas','nosso','nossa','nossos','nossas',
-]);
+// Configurações
+const TOP_N          = 3;
+const CACHE_TTL_MS   = 30 * 60 * 1000; // 30 minutos
+const MIN_SIMILARITY = 0.75;            // ← abaixe para retornar mais artigos, suba para ser mais seletivo
+const MAX_CHARS_ART  = 1500;            // ← aumente para enviar mais contexto por artigo
+const EMBED_MODEL    = 'text-embedding-ada-002'; // mesmo modelo usado no script Python
 
 // Cache em memória
 let _cache = {
-  artigos: null,  // Map de id → {id, titulo, conteudo}
-  indice: null,   // Map de palavra → [ids]
+  artigos: null, // array com {titulo, texto, vetor}
   ts: 0,
 };
 
@@ -66,68 +58,63 @@ function getDriveClient() {
   return google.drive({ version: 'v3', auth });
 }
 
-// Baixa um arquivo JSON do Drive e retorna o objeto parsed
-async function downloadJSON(drive, fileId) {
-  const res = await drive.files.get(
-    { fileId, alt: 'media' },
-    { responseType: 'text' }
-  );
-  return JSON.parse(res.data);
-}
-
-// Carrega os dois arquivos do Drive e popula o cache
+// Baixa e parseia o JSON do Drive
 async function loadCache() {
   const drive = getDriveClient();
+  const res = await drive.files.get(
+    { fileId: VETORES_FILE_ID, alt: 'media' },
+    { responseType: 'text' }
+  );
+  const artigos = JSON.parse(res.data);
+  _cache = { artigos, ts: Date.now() };
+  console.log(`[context-wp] Cache carregado: ${artigos.length} artigos com embeddings`);
+}
 
-  // Baixa os dois em paralelo para economizar tempo
-  const [artigosArr, indiceObj] = await Promise.all([
-    downloadJSON(drive, ARTIGOS_FILE_ID),
-    downloadJSON(drive, INDICE_FILE_ID),
-  ]);
-
-  // Converte array de artigos para Map (busca por ID em O(1))
-  const artigosMap = new Map();
-  for (const a of artigosArr) {
-    artigosMap.set(a.id, a);
+// Similaridade coseno entre dois vetores
+function cosine(a, b) {
+  let dot = 0, na = 0, nb = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    na  += a[i] * a[i];
+    nb  += b[i] * b[i];
   }
-
-  // Converte índice para Map
-  const indiceMap = new Map(Object.entries(indiceObj));
-
-  _cache = { artigos: artigosMap, indice: indiceMap, ts: Date.now() };
-  console.log(`[context-wp] Cache carregado: ${artigosMap.size} artigos, ${indiceMap.size} palavras-chave`);
+  return na && nb ? dot / (Math.sqrt(na) * Math.sqrt(nb)) : 0;
 }
 
-// Extrai palavras relevantes da pergunta (4+ letras, sem stopwords)
-function extrairPalavras(pergunta) {
-  return (pergunta.toLowerCase().match(/[a-záéíóúâêîôûãõçàüäëïöü]{4,}/g) || [])
-    .filter(p => !STOPWORDS.has(p));
-}
-
-// Busca os artigos mais relevantes para a pergunta
-function buscarArtigos(pergunta) {
-  const palavras = extrairPalavras(pergunta);
-  if (!palavras.length) return [];
-
-  // Conta quantas palavras da pergunta aparecem em cada artigo
-  const score = new Map();
-  for (const palavra of palavras) {
-    const ids = _cache.indice.get(palavra) || [];
-    for (const id of ids) {
-      score.set(id, (score.get(id) || 0) + 1);
-    }
+// Gera embedding da pergunta via OpenAI
+async function embedPergunta(pergunta) {
+  const res = await fetch('https://api.openai.com/v1/embeddings', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: EMBED_MODEL,
+      input: pergunta.slice(0, 2000), // limite seguro de tokens
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`OpenAI embeddings error ${res.status}: ${err}`);
   }
-
-  // Ordena por score, pega os top N com score mínimo
-  return [...score.entries()]
-    .filter(([, s]) => s >= MIN_SCORE)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, TOP_N_ARTIGOS)
-    .map(([id, s]) => ({ artigo: _cache.artigos.get(id), score: s }))
-    .filter(({ artigo }) => artigo);
+  const data = await res.json();
+  return data.data[0].embedding;
 }
 
-// Handler principal — recebe pergunta, retorna contexto formatado
+// Busca os artigos mais similares à pergunta
+function buscarSimilares(vetorPergunta) {
+  return _cache.artigos
+    .map(artigo => ({
+      artigo,
+      score: cosine(vetorPergunta, artigo.vetor),
+    }))
+    .filter(({ score }) => score >= MIN_SIMILARITY)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, TOP_N);
+}
+
+// Handler principal
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -139,35 +126,37 @@ export default async function handler(req, res) {
   if (!message) return res.status(400).json({ error: 'message obrigatório' });
 
   try {
-    // Carrega cache se necessário
+    // Carrega cache se necessário (primeira chamada ou expirado)
     if (!isCacheValid()) {
       await loadCache();
     }
 
-    const resultados = buscarArtigos(message);
+    // Gera embedding da pergunta
+    const vetorPergunta = await embedPergunta(message);
+
+    // Busca artigos mais similares
+    const resultados = buscarSimilares(vetorPergunta);
 
     if (!resultados.length) {
       return res.status(200).json({ context: '', count: 0 });
     }
 
-    // Monta o contexto formatado para o chat
+    // Monta contexto — apenas titulo e texto, sem link
     const partes = resultados.map(({ artigo, score }) => {
-      const conteudo = artigo.conteudo.slice(0, MAX_CHARS_ART);
-      const truncado = artigo.conteudo.length > MAX_CHARS_ART ? '...' : '';
-      return `--- ${artigo.titulo} (relevância: ${score}) ---\n${conteudo}${truncado}`;
+      const texto = (artigo.texto || '').slice(0, MAX_CHARS_ART);
+      const truncado = (artigo.texto || '').length > MAX_CHARS_ART ? '...' : '';
+      return `--- ${artigo.titulo} ---\n${texto}${truncado}`;
     });
 
-    const context = partes.join('\n\n');
-
     return res.status(200).json({
-      context,
+      context: partes.join('\n\n'),
       count: resultados.length,
       titulos: resultados.map(r => r.artigo.titulo),
     });
 
   } catch (err) {
     console.error('[context-wp]', err.message);
-    // Retorna vazio — chat funciona sem esta fonte
+    // Retorna vazio — chat funciona normalmente sem esta fonte
     return res.status(200).json({ context: '', count: 0, error: err.message });
   }
 }
