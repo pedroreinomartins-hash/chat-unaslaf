@@ -125,7 +125,7 @@ export default async function handler(req, res) {
 
     // Lista todos os arquivos da pasta de contexto
     const list = await drive.files.list({
-      q: `'${FOLDER_ID}' in parents and trashed = false`,
+      q: `'${FOLDER_ID}' in parents and trashed = false and mimeType != 'application/vnd.google-apps.folder'`,
       fields: 'files(id, name, mimeType)',
       orderBy: 'modifiedTime desc', // mais recentes primeiro — têm prioridade
     });
