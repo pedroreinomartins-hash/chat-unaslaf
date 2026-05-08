@@ -46,13 +46,18 @@ const REAL_TIME_TRIGGER = /\b(hoje|agora|recente|atual|atualizado|andamento|movi
 // Para adicionar uma regra: copie uma linha [RXX] e cole abaixo da última.
 // =============================================================================
 
-function buildSystemPrompt({ associado, cpf, contextStr, driveContext, message }) {
+function buildSystemPrompt({ associado, cpf, contextStr, wpContext, driveContext, message }) {
   const needsFreshnessWarning = REAL_TIME_TRIGGER.test(message);
   const individualLookup = isIndividualLookup(message);
 
-  // Bloco de contexto do Drive — só aparece se houver conteúdo
+  // Bloco WordPress — artigos do site (relevância média)
+  const wpBlock = wpContext
+    ? `\n\nARTIGOS DO SITE UNASLAF (base WordPress — use como referência secundária):\n========================================\n${wpContext}\n========================================`
+    : '';
+
+  // Bloco Drive — documentos complementares recentes (subsidiário)
   const driveBlock = driveContext
-    ? `\n\nATUALIZAÇÕES E DOCUMENTOS RECENTES (pasta de contexto do Drive):\n========================================\n${driveContext.slice(0, DRIVE_CHAR_LIMIT)}\n========================================`
+    ? `\n\nDOCUMENTOS COMPLEMENTARES (pasta de contexto do Drive):\n========================================\n${driveContext.slice(0, DRIVE_CHAR_LIMIT)}\n========================================`
     : '';
 
   return `Você é o atendente virtual oficial da UNASLAF — Associação Nacional dos Servidores da Extinta Secretaria da Receita Previdenciária.
@@ -145,10 +150,10 @@ SINAIS INTERNOS:
 - Pergunta individual/autenticada? ${individualLookup ? 'Sim' : 'Não'}
 - Pode depender de tempo real? ${needsFreshnessWarning ? 'Sim' : 'Não'}
 
-BASE DE CONHECIMENTO SELECIONADA PARA ESTA PERGUNTA:
+BASE DE CONHECIMENTO — PRIORIDADE 1 (documentos oficiais UNASLAF):
 ========================================
-${contextStr || '(Nenhum documento específico selecionado. Responda com orientações institucionais gerais.)'}${driveBlock}
-========================================`;
+${contextStr || '(Nenhum documento específico selecionado. Responda com orientações institucionais gerais.)'}
+========================================${wpBlock}${driveBlock}`;
 }
 
 
@@ -164,22 +169,35 @@ function sanitizeHistory(history = []) {
     .map(m => ({ role: m.role, content: m.content.slice(0, 4000) }));
 }
 
-// Busca o contexto dinâmico da pasta de contexto do Drive
-// Retorna string vazia silenciosamente se falhar — chat funciona sem o Drive
-async function fetchDriveContext(req) {
-  try {
-    const host = req.headers.host || '';
-    const protocol = host.includes('localhost') ? 'http' : 'https';
-    const baseUrl = `${protocol}://${host}`;
-    const driveRes = await fetch(`${baseUrl}/api/context-drive`, {
-      headers: { Authorization: req.headers.authorization || '' },
-    });
-    if (!driveRes.ok) return '';
-    const data = await driveRes.json();
-    return data.context || '';
-  } catch {
-    return '';
-  }
+// Busca contextos externos em paralelo:
+//   1. WordPress  — artigos do site, busca por palavras-chave (prioridade intermediária)
+//   2. Drive      — documentos recentes na pasta de contexto (subsidiário)
+// Ambos retornam string vazia silenciosamente se falharem.
+async function fetchExternalContexts(req, message) {
+  const host = req.headers.host || '';
+  const protocol = host.includes('localhost') ? 'http' : 'https';
+  const baseUrl = `${protocol}://${host}`;
+  const authHeader = req.headers.authorization || '';
+
+  const [wpData, driveData] = await Promise.all([
+    // WordPress — envia a pergunta para busca no índice invertido
+    fetch(`${baseUrl}/api/context-wp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: authHeader },
+      body: JSON.stringify({ message }),
+    }).then(r => r.ok ? r.json() : { context: '' }).catch(() => ({ context: '' })),
+
+    // Drive — documentos complementares
+    fetch(`${baseUrl}/api/context-drive`, {
+      headers: { Authorization: authHeader },
+    }).then(r => r.ok ? r.json() : { context: '' }).catch(() => ({ context: '' })),
+  ]);
+
+  return {
+    wpContext:    wpData.context    || '',
+    wpTitulos:   wpData.titulos     || [],
+    driveContext: driveData.context || '',
+  };
 }
 
 // Handler principal
@@ -201,19 +219,19 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Mensagem obrigatória' });
     }
 
-    // Busca dados do associado e contextos em paralelo para economizar tempo
-    const [associado, driveContext] = await Promise.all([
+    // Busca tudo em paralelo: associado + WordPress + Drive
+    const [associado, { wpContext, wpTitulos, driveContext }] = await Promise.all([
       findByCPF(cpf),
-      fetchDriveContext(req),
+      fetchExternalContexts(req, message),
     ]);
 
-    // Seleciona documentos estáticos relevantes para a pergunta (RAG)
+    // Seleciona documentos estáticos relevantes (base UNASLAF — prioridade máxima)
     const allowInternalLists = isIndividualLookup(message);
     const relevantDocs = findRelevantDocs(message, MAX_CONTEXT_DOCS, { allowInternalLists });
     const contextStr = buildContextString(relevantDocs);
 
-    // Monta o prompt completo
-    const systemPrompt = buildSystemPrompt({ associado, cpf, contextStr, driveContext, message });
+    // Monta o prompt completo com os 3 blocos de contexto
+    const systemPrompt = buildSystemPrompt({ associado, cpf, contextStr, wpContext, driveContext, message });
 
     const messages = [
       { role: 'system', content: systemPrompt },
@@ -248,7 +266,7 @@ export default async function handler(req, res) {
       reply,
       meta: {
         docs: relevantDocs.map(d => ({ id: d.id, title: d.title })),
-        driveFiles: [],
+        wpTitulos,
         requiresFreshnessConfirmation: REAL_TIME_TRIGGER.test(message),
       },
     });
