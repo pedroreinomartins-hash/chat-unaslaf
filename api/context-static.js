@@ -207,6 +207,65 @@ export { DOCS };
 // Edite aqui caso queira mudar o perfil ou tom do atendente virtual.
 // =============================================================================
 
+
+
+DOCS.push({ id:'duvidas recorrentes', title:'Título do Documento', category:'categoria', content:`
+     
+
+Dúvidas Recorrentes dos Associados
+Nomenclatura
+Como está o andamento do processo de nomenclatura?
+ Para a resposta individual, importante salientar que o processo de nomenclatura está dividido em duas situações:
+ - Associados que não estão incluídos na ação de execução;
+ - Associados que não estão incluídos na ação de conhecimento.
+ 
+PIS/PASEP
+Como está o andamento do processo do PIS/PASEP? Qual foi a sentença do juiz?
+ O processo foi julgado desfavoravelmente porque...
+Como será o procedimento para que os associados entrem individualmente com a mesma ação?
+
+
+
+GEAP
+A Unaslaf possui algum desconto ou benefício para associados na GEAP?
+Não.
+ 
+Acesso Restrito ao Site
+Não consigo acessar a área restrita do site. O que devo fazer?
+ Favor entrar em contato por meio do WhatsApp (61) 98107-0691, onde o acesso será restabelecido.
+Mensalidade
+O desconto da mensalidade não está sendo feito na minha folha de pagamento. Como autorizar?
+ O associado deve providenciar a autorização de desconto pelo SouGov.
+ 
+PASSO A PASSO PARA HABILITAR DESCONTO EM FOLHA, PELO APLICATIVO SOUGOV.BR 
+1º) Para autorizar o desconto em sua folha de pagamento (contracheque), clique em “Consignação”, depois em “Outras Consignações Descontadas em Folha” e, em seguida, “Autorizar Desconto em Folha”:
+2º) Clique na setinha ao lado de “Selecione o tipo de consignação” para escolher o desconto que você deseja autorizar em sua folha de pagamento (contracheque):
+3º) Selecione o tipo de consignação: “Facultativa 35% - Demais” e depois clique em “Autorizar”. Leia as informações da autorização gerada e, caso esteja tudo certo, você pode “Confirmar” ou “Desistir”:
+4º) No campo “Consignatário”, pesquisar pelo nome da associação: "ASSOCIACAO NACIONAL DOS SERVIDORES DA EXTINTA SECRETARI..." Logo em seguida, clique em “Autorizar” e se estiver tudo correto, em “Confirmar”.
+ 
+Não tenho margem consignável ou não quero autorizar desconto em folha. Como posso pagar?
+ O pagamento das mensalidades pode ser realizado via transferência bancária ou PIX. A mensalidade deverá ser transferida até todo dia 10.
+Dados bancários da Unaslaf:
+Banco: Banco do Brasil
+ Agência: 0452-9
+ Conta Corrente: 201049-6
+ PIX (CNPJ): 73.369.795/0001-83
+ Razão Social: Associação Nacional dos Servidores da Secretaria da Receita Previdenciária
+Termos de Compromisso
+Quanto devo para a Unaslaf com base nos termos de compromisso?
+ Os valores devidos variam conforme a situação individual de cada associado.
+Quando preciso realizar o pagamento?
+ A Unaslaf irá instruir os associados sobre os prazos e a forma de pagamento assim que houver definição e organização do procedimento.
+
+Envio de comprovantes de pagamento
+Para qual meio devo enviar o comprovante de pagamento da mensalidade/chamada extra?
+O comprovante de pagamento da mensalidade deve ser enviado para o e-mail: comprovante@unaslaf.org.br 
+     
+   ` });
+
+
+
+
 DOCS.push({
   id: 'apresentacao',
   title: 'Apresentação Fontes Regras Matriz',
