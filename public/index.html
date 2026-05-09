@@ -3,37 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UNASLAF — App do Associado</title>
+  <title>UNA+ — Assistente Virtual da UNASLAF</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    /* ── Tokens ─────────────────────────────────────────────────────────── */
+    /* ── Tokens UNA+ ─────────────────────────────────────────────────────── */
     :root {
-      --green:       #1E7C4D;
-      --green-light: #2EA265;
-      --green-pale:  #E8F5EE;
-      --green-glow:  rgba(30,124,77,.15);
-      --dark:        #0D1F16;
-      --mid:         #1A3326;
-      --text:        #1C2E24;
-      --muted:       #6B8C78;
-      --border:      #D4E8DC;
-      --bg:          #F7FAF8;
+      --blue:        #003087;
+      --blue-mid:    #0047B3;
+      --blue-light:  #E8F0FA;
+      --blue-glow:   rgba(0,48,135,.15);
+      --green:       #00A651;
+      --green-light: #00C462;
+      --green-pale:  #E6F7EE;
+      --dark:        #001F5B;
+      --mid:         #002470;
+      --text:        #0D1B3E;
+      --muted:       #6B7FA8;
+      --border:      #D0DCF0;
+      --bg:          #F4F7FC;
       --white:       #FFFFFF;
       --danger:      #C0392B;
       --warn-bg:     #FFF8E1;
       --warn-border: #F9A825;
       --radius:      14px;
-      --shadow:      0 4px 24px rgba(0,0,0,.08);
-      --shadow-lg:   0 12px 48px rgba(0,0,0,.12);
+      --shadow:      0 4px 24px rgba(0,48,135,.08);
+      --shadow-lg:   0 12px 48px rgba(0,48,135,.15);
     }
 
     /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text); }
+    html, body { height: 100%; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); }
     button { font-family: inherit; cursor: pointer; border: none; outline: none; }
     input, textarea, select { font-family: inherit; outline: none; }
-    a { color: var(--green); text-decoration: none; }
+    a { color: var(--blue); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
     /* ── Scrollbar ──────────────────────────────────────────────────────── */
@@ -41,92 +44,99 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 
-    /* ── Layout wrapper ─────────────────────────────────────────────────── */
+    /* ── Layout ─────────────────────────────────────────────────────────── */
     #app { min-height: 100vh; display: flex; flex-direction: column; }
 
     /* ── TELA DE LOGIN ──────────────────────────────────────────────────── */
     #screen-login {
       flex: 1; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, var(--dark) 0%, var(--mid) 60%, #0a2e1a 100%);
-      padding: 24px;
-      position: relative; overflow: hidden;
+      background: linear-gradient(145deg, #001F5B 0%, #003087 50%, #001840 100%);
+      padding: 24px; position: relative; overflow: hidden;
     }
     #screen-login::before {
       content: '';
       position: absolute; inset: 0;
-      background: radial-gradient(circle at 70% 30%, rgba(46,162,101,.18) 0%, transparent 60%);
+      background:
+        radial-gradient(circle at 80% 20%, rgba(0,166,81,.20) 0%, transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(0,71,179,.25) 0%, transparent 50%);
       pointer-events: none;
     }
+    /* Elementos decorativos de fundo */
+    #screen-login::after {
+      content: 'una+';
+      position: absolute; bottom: -40px; right: -20px;
+      font-size: 220px; font-weight: 800; color: rgba(255,255,255,.03);
+      font-family: 'Poppins', sans-serif; pointer-events: none; line-height: 1;
+    }
     .login-card {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 48px 40px;
-      width: 100%; max-width: 420px;
-      box-shadow: var(--shadow-lg);
-      position: relative; z-index: 1;
+      background: var(--white); border-radius: 24px;
+      padding: 48px 40px; width: 100%; max-width: 420px;
+      box-shadow: var(--shadow-lg); position: relative; z-index: 1;
       animation: fadeUp .5s ease;
     }
     @keyframes fadeUp {
       from { opacity:0; transform: translateY(24px); }
       to   { opacity:1; transform: translateY(0); }
     }
-    .login-logo {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 32px;
+
+    /* Logo UNA+ */
+    .login-logo { margin-bottom: 28px; }
+    .logo-unaplus {
+      display: inline-flex; align-items: center; gap: 0;
+      font-size: 42px; font-weight: 800; line-height: 1;
+      color: var(--blue); letter-spacing: -2px;
     }
-    .login-logo-mark {
-      width: 44px; height: 44px;
-      background: linear-gradient(135deg, var(--green), var(--green-light));
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 700; font-size: 18px; letter-spacing: -1px;
+    .logo-unaplus .plus { color: var(--green); }
+    .logo-tagline {
+      display: block; font-size: 11px; font-weight: 500;
+      color: var(--muted); letter-spacing: 1.5px;
+      text-transform: uppercase; margin-top: 4px;
     }
-    .login-logo-text { line-height: 1.1; }
-    .login-logo-text strong { display: block; font-size: 18px; font-weight: 700; color: var(--dark); }
-    .login-logo-text span { font-size: 11px; color: var(--muted); font-weight: 400; }
-    .login-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; color: var(--dark); }
-    .login-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+
+    .login-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: var(--dark); }
+    .login-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+
     .field { margin-bottom: 16px; }
-    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; letter-spacing: .5px; text-transform: uppercase; }
+    .field label {
+      display: block; font-size: 11px; font-weight: 600;
+      color: var(--muted); margin-bottom: 6px;
+      letter-spacing: .6px; text-transform: uppercase;
+    }
     .field input {
       width: 100%; padding: 13px 16px;
       border: 1.5px solid var(--border); border-radius: var(--radius);
-      font-size: 15px; color: var(--text);
+      font-size: 15px; color: var(--text); font-family: 'Poppins', sans-serif;
       transition: border .2s, box-shadow .2s;
     }
-    .field input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); }
+    .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-glow); }
     .field input.error { border-color: var(--danger); }
+
     .btn-primary {
       width: 100%; padding: 14px;
-      background: linear-gradient(135deg, var(--green), var(--green-light));
+      background: linear-gradient(135deg, var(--blue), var(--blue-mid));
       color: white; font-size: 15px; font-weight: 600;
       border-radius: var(--radius); transition: opacity .2s, transform .1s;
-      margin-top: 4px;
+      margin-top: 4px; font-family: 'Poppins', sans-serif;
     }
     .btn-primary:hover { opacity: .9; }
     .btn-primary:active { transform: scale(.98); }
     .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
     .login-error {
       background: #fdecea; color: var(--danger);
       border-radius: 10px; padding: 12px 14px;
-      font-size: 13px; line-height: 1.5; margin-bottom: 16px;
-      display: none;
+      font-size: 13px; line-height: 1.5; margin-bottom: 16px; display: none;
     }
     .login-error.show { display: block; }
     .login-security {
       text-align: center; font-size: 11px; color: var(--muted);
-      margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 5px;
+      margin-top: 20px; display: flex; align-items: center;
+      justify-content: center; gap: 5px;
     }
-    .code-info {
-      background: var(--green-pale); border-radius: 10px;
-      padding: 12px 14px; font-size: 13px; color: var(--green);
-      margin-bottom: 16px; line-height: 1.5; display: none;
-    }
-    .code-info.show { display: block; }
     .step { display: none; }
     .step.active { display: block; }
 
-    /* ── APP SHELL (pós-login) ───────────────────────────────────────────── */
+    /* ── APP SHELL ───────────────────────────────────────────────────────── */
     #screen-app { display: none; flex-direction: column; min-height: 100vh; }
     #screen-app.show { display: flex; }
 
@@ -136,17 +146,19 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 24px; height: 56px;
       position: sticky; top: 0; z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,.3);
+      box-shadow: 0 2px 16px rgba(0,0,0,.3);
     }
     .topbar-brand { display: flex; align-items: center; gap: 10px; }
-    .topbar-logo {
-      width: 32px; height: 32px;
-      background: linear-gradient(135deg, var(--green), var(--green-light));
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 13px; color: white;
+    .topbar-logo-text {
+      font-size: 22px; font-weight: 800; color: white;
+      letter-spacing: -1px; line-height: 1;
     }
-    .topbar-name { font-size: 14px; font-weight: 600; color: white; }
+    .topbar-logo-text .plus { color: var(--green); }
+    .topbar-tagline {
+      font-size: 9px; font-weight: 500; color: rgba(255,255,255,.5);
+      text-transform: uppercase; letter-spacing: 1px; display: block;
+      margin-top: -2px;
+    }
     .topbar-right { display: flex; align-items: center; gap: 12px; }
     .user-badge {
       font-size: 12px; color: rgba(255,255,255,.6);
@@ -156,15 +168,15 @@
       background: rgba(255,255,255,.1); color: rgba(255,255,255,.8);
       font-size: 12px; font-weight: 500; padding: 6px 12px;
       border-radius: 8px; transition: background .2s;
+      font-family: 'Poppins', sans-serif;
     }
     .btn-logout:hover { background: rgba(255,255,255,.2); }
 
-    /* Navigation */
+    /* Navbar */
     .navbar {
       background: var(--white);
       border-bottom: 1px solid var(--border);
-      display: flex; overflow-x: auto;
-      padding: 0 16px;
+      display: flex; overflow-x: auto; padding: 0 16px;
     }
     .nav-btn {
       padding: 0 20px; height: 46px;
@@ -173,19 +185,18 @@
       border-bottom: 2.5px solid transparent;
       transition: color .2s, border-color .2s;
       display: flex; align-items: center; gap: 7px;
+      font-family: 'Poppins', sans-serif;
     }
-    .nav-btn.active { color: var(--green); border-bottom-color: var(--green); }
+    .nav-btn.active { color: var(--blue); border-bottom-color: var(--green); }
     .nav-btn:hover:not(.active) { color: var(--text); }
     .nav-icon { font-size: 16px; }
 
-    /* Content area */
+    /* Content */
     .content { flex: 1; padding: 24px; max-width: 900px; margin: 0 auto; width: 100%; }
-
-    /* Panels */
     .panel { display: none; }
     .panel.active { display: block; }
 
-    /* ── CHAT PANEL ─────────────────────────────────────────────────────── */
+    /* ── CHAT ────────────────────────────────────────────────────────────── */
     .chat-wrapper {
       display: flex; flex-direction: column;
       height: calc(100vh - 56px - 46px - 48px);
@@ -217,43 +228,59 @@
       padding: 11px 15px; border-radius: 14px;
       font-size: 14px; line-height: 1.6; word-break: break-word;
     }
-    .msg.user .msg-bubble { background: var(--green); color: white; border-bottom-right-radius: 4px; }
-    .msg.ai   .msg-bubble { background: var(--bg); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; }
+    .msg.user .msg-bubble {
+      background: linear-gradient(135deg, var(--blue), var(--blue-mid));
+      color: white; border-bottom-right-radius: 4px;
+    }
+    .msg.ai .msg-bubble {
+      background: var(--bg); border: 1px solid var(--border);
+      color: var(--text); border-bottom-left-radius: 4px;
+    }
     .msg-bubble p { margin: 0 0 8px; }
     .msg-bubble p:last-child { margin-bottom: 0; }
-    .msg-label { font-size: 11px; color: var(--muted); padding: 0 4px; }
+    .msg-label { font-size: 11px; color: var(--muted); padding: 0 4px; font-weight: 500; }
+
+    /* Avatar UNA+ na bolha da IA */
+    .msg.ai .msg-label::before {
+      content: 'una+ ';
+      font-weight: 700; color: var(--blue);
+    }
+
     .chat-chips {
-      display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 20px;
-      border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 12px 20px; border-top: 1px solid var(--border);
     }
     .chip {
-      background: var(--green-pale); color: var(--green);
-      border: 1px solid #b6dfca; border-radius: 99px;
+      background: var(--blue-light); color: var(--blue);
+      border: 1px solid #b8cef0; border-radius: 99px;
       font-size: 12px; font-weight: 500; padding: 5px 13px;
       transition: background .2s, color .2s;
+      font-family: 'Poppins', sans-serif;
     }
-    .chip:hover { background: var(--green); color: white; }
+    .chip:hover { background: var(--blue); color: white; }
+
     .chat-input-bar {
       display: flex; gap: 10px; padding: 14px 16px;
-      border-top: 1px solid var(--border);
-      background: var(--white);
+      border-top: 1px solid var(--border); background: var(--white);
     }
     .chat-input {
       flex: 1; padding: 11px 15px;
       border: 1.5px solid var(--border); border-radius: 99px;
-      font-size: 14px; color: var(--text);
+      font-size: 14px; color: var(--text); font-family: 'Poppins', sans-serif;
       transition: border .2s, box-shadow .2s;
     }
-    .chat-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); }
+    .chat-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-glow); }
     .btn-send {
       width: 42px; height: 42px; border-radius: 50%;
-      background: var(--green); color: white; font-size: 18px;
+      background: linear-gradient(135deg, var(--green), var(--green-light));
+      color: white; font-size: 18px;
       display: flex; align-items: center; justify-content: center;
       transition: opacity .2s, transform .1s; flex-shrink: 0;
     }
     .btn-send:hover { opacity: .85; }
     .btn-send:active { transform: scale(.93); }
     .btn-send:disabled { opacity: .4; cursor: not-allowed; }
+
     .typing-bubble { display: flex; gap: 4px; padding: 13px 16px; }
     .typing-bubble span {
       width: 7px; height: 7px; background: var(--muted);
@@ -266,7 +293,7 @@
       40%          { transform: scale(1);  opacity:1; }
     }
 
-    /* ── CADASTRO PANEL ─────────────────────────────────────────────────── */
+    /* ── CADASTRO ────────────────────────────────────────────────────────── */
     .card {
       background: var(--white); border-radius: var(--radius);
       box-shadow: var(--shadow); padding: 28px 32px;
@@ -278,13 +305,19 @@
     .form-grid .span2 { grid-column: span 2; }
     @media (max-width: 600px) { .form-grid .span2 { grid-column: span 1; } }
     .field-row { display: flex; flex-direction: column; gap: 6px; }
-    .field-row label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; }
-    .field-row input {
+    .field-row label {
+      font-size: 11px; font-weight: 600; color: var(--muted);
+      letter-spacing: .6px; text-transform: uppercase;
+    }
+    .field-row input, .field-row select {
       padding: 11px 14px; border: 1.5px solid var(--border);
       border-radius: 10px; font-size: 14px; color: var(--text);
+      font-family: 'Poppins', sans-serif; background: var(--white);
       transition: border .2s, box-shadow .2s;
     }
-    .field-row input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); }
+    .field-row input:focus, .field-row select:focus {
+      border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-glow);
+    }
     .field-row input:disabled { background: var(--bg); color: var(--muted); cursor: not-allowed; }
     .field-row input.empty-required { border-color: var(--danger); background: #fff5f5; }
     .readonly-badge {
@@ -293,9 +326,10 @@
       margin-left: 6px; text-transform: none; letter-spacing: 0;
     }
     .btn-save {
-      padding: 13px 28px; background: linear-gradient(135deg, var(--green), var(--green-light));
+      padding: 13px 28px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-mid));
       color: white; font-size: 14px; font-weight: 600; border-radius: var(--radius);
-      transition: opacity .2s; margin-top: 8px;
+      transition: opacity .2s; margin-top: 8px; font-family: 'Poppins', sans-serif;
     }
     .btn-save:disabled { opacity: .45; cursor: not-allowed; }
     .save-msg {
@@ -305,21 +339,19 @@
     .save-msg.ok  { color: var(--green); }
     .save-msg.err { color: var(--danger); }
 
-    /* ── DOCUMENTOS PANEL ───────────────────────────────────────────────── */
-    .docs-toolbar {
-      display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
-    }
+    /* ── DOCUMENTOS ─────────────────────────────────────────────────────── */
+    .docs-toolbar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
     .docs-search {
       flex: 1; min-width: 180px; padding: 10px 14px;
       border: 1.5px solid var(--border); border-radius: var(--radius);
       font-size: 14px; color: var(--text); background: var(--white);
-      transition: border .2s;
+      font-family: 'Poppins', sans-serif; transition: border .2s;
     }
-    .docs-search:focus { border-color: var(--green); }
+    .docs-search:focus { border-color: var(--blue); }
     .docs-filter {
       padding: 10px 14px; border: 1.5px solid var(--border);
       border-radius: var(--radius); font-size: 13px; background: var(--white);
-      color: var(--text);
+      color: var(--text); font-family: 'Poppins', sans-serif;
     }
     .docs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 14px; }
     .doc-card {
@@ -328,26 +360,21 @@
       display: flex; flex-direction: column; gap: 10px;
       transition: border-color .2s, box-shadow .2s;
     }
-    .doc-card:hover { border-color: var(--green); box-shadow: 0 4px 16px var(--green-glow); }
+    .doc-card:hover { border-color: var(--blue); box-shadow: 0 4px 16px var(--blue-glow); }
     .doc-icon { font-size: 28px; }
     .doc-name { font-size: 13px; font-weight: 600; color: var(--dark); line-height: 1.4; }
     .doc-meta { font-size: 11px; color: var(--muted); }
     .doc-cat {
-      display: inline-block; background: var(--green-pale); color: var(--green);
+      display: inline-block; background: var(--blue-light); color: var(--blue);
       border-radius: 99px; font-size: 11px; font-weight: 500; padding: 3px 10px;
     }
     .btn-download {
-      margin-top: auto; padding: 8px 0; background: var(--green-pale);
-      color: var(--green); font-size: 13px; font-weight: 600;
+      margin-top: auto; padding: 8px 0; background: var(--blue-light);
+      color: var(--blue); font-size: 13px; font-weight: 600;
       border-radius: 8px; text-align: center; width: 100%;
-      transition: background .2s, color .2s;
+      transition: background .2s, color .2s; font-family: 'Poppins', sans-serif;
     }
-    .btn-download:hover { background: var(--green); color: white; }
-    .empty-state {
-      text-align: center; padding: 48px; color: var(--muted);
-      font-size: 14px;
-    }
-    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .btn-download:hover { background: var(--blue); color: white; }
 
     /* ── Loader ─────────────────────────────────────────────────────────── */
     .loader {
@@ -356,29 +383,29 @@
       border-top-color: white; border-radius: 50%;
       animation: spin .7s linear infinite;
     }
-    .loader.dark { border-color: var(--border); border-top-color: var(--green); }
+    .loader.dark { border-color: var(--border); border-top-color: var(--blue); }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-overlay {
       display: flex; align-items: center; justify-content: center;
       padding: 40px; gap: 10px; color: var(--muted); font-size: 13px;
     }
+    .empty-state {
+      text-align: center; padding: 48px; color: var(--muted); font-size: 14px;
+    }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
   </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- ═══════════════════════════ LOGIN ═══════════════════════════════════ -->
+  <!-- ═══════════════════════════ LOGIN ══════════════════════════════════ -->
   <div id="screen-login">
     <div class="login-card">
       <div class="login-logo">
-        <div class="login-logo-mark">UN</div>
-        <div class="login-logo-text">
-          <strong>UNASLAF</strong>
-          <span>App do Associado</span>
-        </div>
+        <div class="logo-unaplus">una<span class="plus">+</span></div>
+        <span class="logo-tagline">Assistente Virtual da UNASLAF</span>
       </div>
 
-      <!-- Login por CPF direto -->
       <div id="step-cpf" class="step active">
         <div class="login-title">Acesso do Associado</div>
         <div class="login-subtitle">Informe seu CPF cadastrado para acessar o sistema.</div>
@@ -395,11 +422,12 @@
 
   <!-- ═══════════════════════════ APP ════════════════════════════════════ -->
   <div id="screen-app">
-    <!-- Topbar -->
     <div class="topbar">
       <div class="topbar-brand">
-        <div class="topbar-logo">UN</div>
-        <div class="topbar-name">UNASLAF</div>
+        <div>
+          <div class="topbar-logo-text">una<span class="plus">+</span></div>
+          <span class="topbar-tagline">Assistente Virtual UNASLAF</span>
+        </div>
       </div>
       <div class="topbar-right">
         <div class="user-badge" id="user-badge"></div>
@@ -407,7 +435,6 @@
       </div>
     </div>
 
-    <!-- Navbar -->
     <nav class="navbar">
       <button class="nav-btn active" data-panel="chat">
         <span class="nav-icon">💬</span> Atendimento
@@ -420,32 +447,31 @@
       </button>
     </nav>
 
-    <!-- Content -->
     <div class="content">
 
-      <!-- ─── CHAT ──────────────────────────────────────────────────── -->
+      <!-- CHAT -->
       <div id="panel-chat" class="panel active">
         <div class="chat-wrapper">
           <div class="chat-disclaimer">
             <span>⚠️</span>
-            <span>As informações geradas por inteligência artificial têm caráter <strong>orientativo e não oficial</strong>. Não substituem canais oficiais, assessoria jurídica ou autoridades competentes.</span>
+            <span>As informações geradas têm caráter <strong>orientativo e não oficial</strong>. Não substituem canais oficiais, assessoria jurídica ou autoridades competentes.</span>
           </div>
           <div class="chat-messages" id="chat-messages"></div>
           <div class="chat-chips" id="chat-chips">
-            <button class="chip" data-q="O que é a UNASLAF?">O que é a UNASLAF?</button>
-            <button class="chip" data-q="Quais são as ações coletivas?">Ações coletivas</button>
-            <button class="chip" data-q="O que é a ADI 4151?">ADI 4151</button>
-            <button class="chip" data-q="Como me filiar à UNASLAF?">Como me filiar</button>
-            <button class="chip" data-q="Quais são os meus direitos como associado?">Direitos dos associados</button>
+            <button class="chip" data-q="Quais são os meus benefícios como associado?">Benefícios</button>
+            <button class="chip" data-q="Quais são as ações jurídicas da UNASLAF?">Ações Jurídicas</button>
+            <button class="chip" data-q="Quais convênios a UNASLAF oferece?">Convênios</button>
+            <button class="chip" data-q="Quais são as últimas notícias da UNASLAF?">Notícias</button>
+            <button class="chip" data-q="Como entrar em contato com a UNASLAF?">Fale com a UNASLAF</button>
           </div>
           <div class="chat-input-bar">
-            <input class="chat-input" id="chat-input" placeholder="Envie sua dúvida..." />
+            <input class="chat-input" id="chat-input" placeholder="Digite sua mensagem..." />
             <button class="btn-send" id="btn-send" title="Enviar">➤</button>
           </div>
         </div>
       </div>
 
-      <!-- ─── CADASTRO ──────────────────────────────────────────────── -->
+      <!-- CADASTRO -->
       <div id="panel-cadastro" class="panel">
         <div class="card">
           <div class="card-title">Meu Cadastro</div>
@@ -462,7 +488,7 @@
         </div>
       </div>
 
-      <!-- ─── DOCUMENTOS ────────────────────────────────────────────── -->
+      <!-- DOCUMENTOS -->
       <div id="panel-documentos" class="panel">
         <div class="docs-toolbar">
           <input class="docs-search" id="docs-search" placeholder="🔍  Buscar documentos..." />
