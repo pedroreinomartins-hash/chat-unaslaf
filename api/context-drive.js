@@ -115,6 +115,10 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Método não permitido' });
 
+// Validação de sessão
+  const _tokenDrive = (req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
+  if (!_tokenDrive) return res.status(401).json({ error: 'Não autorizado' });
+  
   // Retorna do cache se ainda válido — evita chamar o Drive a cada mensagem
   if (isCacheValid()) {
     return res.status(200).json({ context: _cache.context, files: _cache.files, cached: true });
