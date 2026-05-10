@@ -363,17 +363,6 @@
       display: flex; align-items: center; justify-content: center;
       padding: 40px; gap: 10px; color: var(--muted); font-size: 13px;
     }
-
-     /* ESTILO DA IMAGEM IMPLEMENTADO */
-    .img-login-header {
-      height: 100%;
-      max-width: auto;
-      max-height: 100%;
-      border-radius: 12px;
-      margin-bottom: 24px;
-      display: block;
-    }
-    
   </style>
 </head>
 <body>
@@ -383,7 +372,11 @@
   <div id="screen-login">
     <div class="login-card">
       <div class="login-logo">
-        <img src="ic_unamais.png" class="img-login-header" alt="UNA+">
+        <div class="login-logo-mark">UN</div>
+        <div class="login-logo-text">
+          <strong>UNASLAF</strong>
+          <span>App do Associado</span>
+        </div>
       </div>
 
       <!-- Login por CPF direto -->
@@ -406,7 +399,6 @@
     <!-- Topbar -->
     <div class="topbar">
       <div class="topbar-brand">
-         <img src="logo_robo_unamais.jpg" class="img-login-header" alt="UNA+">
         <div class="topbar-logo">UN</div>
         <div class="topbar-name">UNASLAF</div>
       </div>
