@@ -322,6 +322,61 @@
     .modal-success .success-icon { font-size: 48px; margin-bottom: 12px; }
     .modal-success .success-title { font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
     .modal-success .success-file { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; word-break: break-all; }
+  
+    /* ── TOPBAR MOBILE ──────────────────────────────────────────────────── */
+    /* Garante que os botões nunca saiam da tela em celulares */
+    .topbar {
+      padding: 0 12px;
+    }
+    .topbar-brand {
+      flex-shrink: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .topbar-brand img {
+      max-width: 180px;
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
+    .topbar-right {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .user-badge {
+      max-width: 100px;
+    }
+
+    @media (max-width: 480px) {
+      .topbar { padding: 0 10px; }
+
+      /* Oculta o nome do usuário — libera espaço para os botões */
+      .user-badge { display: none; }
+
+      /* Logo menor no mobile */
+      .topbar-brand img { max-width: 130px; }
+
+      /* Botões menores mas ainda clicáveis */
+      .btn-encerrar {
+        padding: 5px 8px;
+        font-size: 11px;
+        gap: 4px;
+      }
+      .btn-logout {
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .topbar-brand img { max-width: 100px; }
+      .btn-encerrar { padding: 5px 6px; font-size: 10px; }
+      .btn-logout   { padding: 5px 6px; font-size: 10px; }
+    }
+
   </style>
 </head>
 <body>
