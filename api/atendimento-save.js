@@ -69,16 +69,16 @@ function montarHistorico(history) {
 async function garantirCabecalho(sheets) {
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: LOGS_SHEET_ID,
-    range: `${LOGS_TAB}!A1:F1`,
+    range: `${LOGS_TAB}!A1:G1`,
   });
   const primeira = (res.data.values || [])[0] || [];
   if (!primeira.length || primeira[0] !== 'Data/Hora') {
     await sheets.spreadsheets.values.update({
       spreadsheetId: LOGS_SHEET_ID,
-      range: `${LOGS_TAB}!A1:F1`,
+      range: `${LOGS_TAB}!A1:G1`,
       valueInputOption: 'RAW',
       requestBody: {
-        values: [['Data/Hora', 'CPF', 'Nome', 'Duração (min)', 'Nº Mensagens', 'Histórico']],
+        values: [['Data/Hora', 'CPF', 'Nome', 'Duração (min)', 'Nº Mensagens', 'Histórico', 'Avaliação']],
       },
     });
   }
@@ -112,10 +112,12 @@ export default async function handler(req, res) {
     // Garante cabeçalho na primeira linha
     await garantirCabecalho(sheets);
 
+    const avaliacao = req.body.avaliacao || '';
+
     // Append da nova linha de log
     await sheets.spreadsheets.values.append({
       spreadsheetId: LOGS_SHEET_ID,
-      range: `${LOGS_TAB}!A:F`,
+      range: `${LOGS_TAB}!A:G`,
       valueInputOption: 'RAW',
       insertDataOption: 'INSERT_ROWS',
       requestBody: {
@@ -126,6 +128,7 @@ export default async function handler(req, res) {
           duracaoMin,
           msgs.length,
           historico,
+          avaliacao,
         ]],
       },
     });
