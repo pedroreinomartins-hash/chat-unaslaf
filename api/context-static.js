@@ -521,48 +521,298 @@ DOCS.push({
   content: `TABELA COMPLETA DE PROCESSOS – UNASLAF
 Atualizado: Maio/2026 | Total: 38 processos/ações
 
-=== EQUIPE INTERNA ===
-ADI 4151 | STF | Em andamento | Todos os associados
+# BASE DE CONHECIMENTO — AÇÕES JUDICIAIS DA UNASLAF
 
-=== MOTA ADVOGADOS ===
-0727740-19.2020.8.07.0001 | TJDF 24ª Vara | 31/08/2020 | IMPROCEDENTE (mar/2026) | PASEP | Lista específica
-1004692-44.2020.4.01.3400 | JFDF 6ª Vara | 29/01/2020 | Em andamento | Auxílio Transporte Coletiva | Rol de associados
-1015579-87.2020.4.01.3400 | JFDF 4ª Vara | 19/03/2020 | ARQUIVADO DEFINITIVAMENTE | MS/COVID-19 | Rol de associados
-1019847-53.2021.4.01.3400 | JFDF 6ª Vara | 08/04/2021 | VITÓRIA EM APELAÇÃO | Abono de Permanência | Rol de associados
-1023229-54.2021.4.01.3400 | JFDF 2ª Vara | 26/04/2021 | Em andamento | Paridade | Rol de associados
-1074276-67.2021.4.01.3400 | JFDF 8ª Vara | 19/10/2021 | Em andamento | Licença Prêmio em Pecúnia | Rol de associados
-1079393-39.2021.4.01.3400 | JFDF 5ª Vara | 09/11/2021 | VITÓRIA — TJ 16/05/2022 | IR sobre Auxílio-Creche | Rol de associados
-1080942-84.2021.4.01.3400 | JFDF 3ª Vara | 16/11/2021 | AI 1036859-27.2023 | Quota Participação Auxílio Creche | Rol de associados
-1084980-42.2021.4.01.3400 | JFDF 17ª Vara | 01/12/2021 | Em andamento | Dobra do Teto Contribuição | Rol de associados
-5024330-86.2020.4.03.6100 | JFSP 17ª Vara | - | Em andamento | Reposição ao Erário | Lista específica
-0061254-90.1997.4.03.6100 | JFSP 4ª Vara | - | Em andamento | Reajuste 28,86% (Lei 8.627/93) | Lista específica
-970025637-5 | JFRS 6ª Vara | - | ARQUIVADO | 28,86% | Lista específica
-0031048-60.2001.4.01.3400 | JFDF 15ª Vara | - | ARQUIVADO | 28,86% | Lista específica
-38782-33.1999.4.01.34.00 | JFSP 4ª Vara | - | ARQUIVADO | 28,86% | Lista específica
-8426-69.2010.4.01.3400 | JFDF | - | Em andamento | Averbação/Cômputo Tempo Especial | -
-1022299-41.2018.4.01.3400 | JFDF 22ª Vara | - | Em andamento | Adicional de Fronteira | -
-1024043-71.2018.4.01.3400 | JFDF 2ª Vara | - | Em andamento | IN 02/2018 Jornada/Abono Ponto | -
-0727196-31.2020.8.07.0001 | JFDF 21ª Vara | - | Em andamento | Danos Materiais GEAP | Rol de associados
-1007732-68.2019.4.01.3400 | JFDF 6ª Vara | - | Em andamento | MP 873/2019 | Diretores UNASLAF
-1009517-65.2019.4.01.3400 | JFDF 22ª Vara | - | Em andamento | Auxílio Transporte Grupo Específico | -
-2005.71.00.020255-3 | JFRS | - | Em andamento | Execução Sentença 97.00.023625-0/RS | Lucia Trindade de Souza, Nair Rost de Borba, Ines Irene Brugnera Castelli (excluída)
-5002118-66.2011.4.04.7100 | JFRS | - | Em andamento | Execução Sentença 97.00.023625-0/RS | Amadeu Fabre Neto (excluído), Célia Arndt Gomes, Celso Scheffer Salles, Domingos Adão Davila, José Luis Dellagnere Fenoy, Leni Amir Perone (excluída), Maria Alice Nicolini, Maria Dora Ferreira Medeiros, Maria Isabel Radaelli Duarte, Maria Thereza Correa da Silva, Nair Rost de Borba
-5002121-21.2011.4.04.7100 | JFRS | - | ARQUIVADO | Embargos de Execução | -
-5005264-18.2011.4.04.7100 | JFRS | - | ARQUIVADO | Embargos de Execução | -
-5053568-38.2017.4.04.7100 | JFRS | - | Em andamento | Execução Sentença 97.00.023625-0/RS | Doris Silva Veiga, Eni Terezinha Barbosa de Araújo, Iara Beatriz dos Santos Correa, Ivani Baptista dos Santos, Maria de Fátima Gatto Tosin, Osmar Nunes de Freitas (excluído), Rosaura Maria Silveira Vieira, Rute Pacheco Borges
+**Documento de contexto para assistente virtual (chatbot)**
+Elaborado pela Diretoria Jurídica da UNASLAF · Posição em 19 de outubro de 2026
 
-=== RAPHAEL MALINVERNI ===
-0055884-14.2012.4.01.3400 | JFDF 1ª Vara | 13/11/2012 | Em andamento | Transformação Cargo Analista Tributário | Lista específica
-0005911-80.2018.4.01.3400 | JFDF 7ª Vara | - | Em andamento | Execução Provisória 1 — Nomenclatura | Lista específica
-0012872-86.2008.4.01.3400 | JFDF 7ª Vara | 22/04/2008 | Em andamento | Correção Nomenclatura | Lista específica
-0020259-84.2010.4.01.3400 | JFDF 22ª Vara | 27/04/2010 | Em andamento | Descontos INSS sobre Terço de Férias | -
-0038104-37.2007.4.01.3400 | JFDF 16ª Vara | 29/10/2007 | ARQUIVADO | Suspensão Prazo Retorno INSS | -
-1018458-28.2024.4.01.3400 | JFDF 7ª Vara | 21/03/2024 | Em andamento | Execução Provisória 2 — Nomenclatura | Lista específica
-0036028-35.2010.4.01.3400 | JFDF 9ª Vara | - | Em andamento | Exclusão do PECFAZ | -
-1098257-23.2024.4.01.3400 | JFDF 7ª Vara | 03/12/2024 | Em andamento | Segunda Correção Nomenclatura | Lista específica
-0031897-85.2008.4.01.3400 | - | - | Em andamento | Suspensão Art. 256-A PECFAZ | -
-1014667-95.2026.4.01.0000 | TRF1 | 20/04/2026 | Em andamento | Agravo de Instrumento — MS 1021420-53.2026 — Portaria DGP/SSC/MGI 1.985/2026 | Lista específica: ALDO ROEDEL 309.039.719-68; EDUARDO ROBERTO TORRIERI 206.956.248-49; GLAUCIA DA SILVA CORLAITE 046.427.396-02; JOÃO ALVES DO SANTOS 721.929.338-00; JULIA MARIA THEREZA MURBACK 067.768.948-92; MARIANA THEREZA MURBACK 431.217.398-24; MARCIA MACHADO DE FREITAS 382.441.876-20; MARIA CRISTINA DE CARVALHO 004.823.298-07; MARILDA ANTONIA DE FREITAS PERUSSO 056.460.788-65; MILCIO DE FREITAS BAHIA 296.272.147-87; NEUSA BEATRIZ NOGUEIRA 480.454.460-72; REGINA PEREIRA DE FREITAS KLEIN 607.779.829-00; SUELI MOREIRA PINTO 066.123.708-74
-1021420-53.2026.4.01.3400 | JFDF 18ª Vara Federal | 04/03/2026 | Em andamento | Mandado de Segurança — Portaria DGP/SSC/MGI 1.985/2026 | Lista específica: ALDO ROEDEL 309.039.719-68; EDUARDO ROBERTO TORRIERI 206.956.248-49; GLAUCIA DA SILVA CORLAITE 046.427.396-02; JOÃO ALVES DO SANTOS 721.929.338-00; JULIA MARIA THEREZA MURBACK 067.768.948-92; MARIANA THEREZA MURBACK 431.217.398-24; MARCIA MACHADO DE FREITAS 382.441.876-20; MARIA CRISTINA DE CARVALHO 004.823.298-07; MARILDA ANTONIA DE FREITAS PERUSSO 056.460.788-65; MILCIO DE FREITAS BAHIA 296.272.147-87; NEUSA BEATRIZ NOGUEIRA 480.454.460-72; REGINA PEREIRA DE FREITAS KLEIN 607.779.829-00; SUELI MOREIRA PINTO 066.123.708-74`
+---
+
+## 0. INSTRUÇÕES DE USO PARA O ASSISTENTE
+
+1. Este documento é a fonte oficial do assistente sobre as ações judiciais da UNASLAF (Associação Nacional dos Servidores da Extinta Secretaria da Receita Previdenciária). Responda somente com base no que está aqui. Se a informação não constar, diga que não dispõe do dado e oriente o associado a procurar a Diretoria Jurídica da UNASLAF.
+2. **Datas das situações.** Cada ação traz a data da última informação disponível. Ao responder, informe sempre essa data ("segundo a última atualização disponível, de julho de 2023…"). Nunca apresente como atual uma situação antiga, nem invente andamento.
+3. **Proteção de dados (LGPD).** Não informe nomes, CPFs ou dados pessoais de beneficiários de nenhuma ação. Se alguém perguntar se uma pessoa determinada é beneficiária de uma ação, responda que a confirmação individual é feita apenas pela Diretoria Jurídica ou pelo escritório responsável, mediante identificação do associado.
+4. **Não preste consultoria individual.** O assistente informa o objeto e o andamento das ações coletivas, mas não afirma que um associado específico tem direito a valores, nem estima quantias, prazos de pagamento ou resultados.
+5. **"Rol de associados" e "lista específica".** Nas ações em que a UNASLAF atua em favor de todos os associados (rol de associados), a abrangência depende da condição de associado e dos critérios da própria decisão. Nas ações de "lista específica", só são alcançados os associados indicados nominalmente no processo.
+6. Linguagem: português claro, cordial e objetivo. Evite juridiquês desnecessário; quando usar termo técnico, explique-o em uma frase.
+
+---
+
+## 1. VISÃO GERAL
+
+- A UNASLAF representa judicialmente servidores ativos, aposentados e pensionistas oriundos da extinta Secretaria da Receita Previdenciária (SRP), redistribuídos à Receita Federal do Brasil (RFB) pela Lei nº 11.457/2007, entre eles Analistas e Técnicos do Seguro Social.
+- A carteira de ações compreende 38 processos (ver Quadro Geral, seção 1-A), divididos entre:
+  - a **ADI nº 4.151/DF**, no Supremo Tribunal Federal (STF), conduzida pela equipe jurídica da entidade e principal ação da UNASLAF;
+  - **ações coletivas** na Justiça Federal do Distrito Federal (JFDF), de São Paulo (JFSP) e do Rio Grande do Sul (JFRS) e na Justiça do DF (TJDFT), patrocinadas pelo escritório **Mota Advogados** (pastas "10H");
+  - ações de **lista específica** patrocinadas pelo advogado **Raphael Malinverni** e pelo escritório **Saliba e Malinverni**.
+- Tipos de beneficiários: "todos os associados" (ADI 4.151), "rol de associados" (ações coletivas) e "lista específica" (somente os associados nominados no processo).
+
+---
+
+## 1-A. QUADRO GERAL DOS PROCESSOS
+
+### Resumo numérico (posição em 19/10/2026)
+- **Total:** 38 processos, na mesma ordem da planilha de controle da UNASLAF (out/2026). Recursos e numerações anteriores ligados a uma ação aparecem na mesma linha.
+- **Arquivados ou extintos:** 11. Desses, 1 está arquivado aguardando execução de sentença favorável (IR sobre auxílio-creche).
+- **Com decisão favorável à UNASLAF ou aos associados (em qualquer instância):** 7, a saber: ADI 4.151, abono de permanência, IR sobre auxílio-creche, MP 873/2019, auxílio-transporte (grupo específico), agravo no TRF-1 sobre a Portaria 1.985/2026 e exclusão do PECFAZ.
+- **Por tipo de beneficiário:**
+  - todos os associados: 1
+  - rol de associados: 9
+  - lista específica: 17
+  - entidade/dirigentes: 2
+  - não informado: 9
+
+### Como ler o quadro
+- "Data da informação" indica de quando é a situação descrita: **jul/2023** (relatório do escritório Mota), **out/2026** (planilha de controle da UNASLAF) ou datas posteriores (registros da Diretoria Jurídica).
+- "Não informada" significa que a fonte não traz o dado. O assistente não deve completar a lacuna por dedução.
+- Cada linha é completa por si: o assunto e o tipo de beneficiário se repetem quando necessário.
+
+| Nº | Processo | Juízo/tribunal | Distribuição | Assunto | Escritório | Beneficiários | Situação | Data da informação | Detalhe |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | ADI nº 4.151/DF | STF — Plenário (Rel. Min. Gilmar Mendes) | não informada | Transformação dos cargos de Analista e Técnico do Seguro Social em Analista-Tributário da RFB (art. 10, II, Lei 11.457/2007) | Equipe jurídica da UNASLAF | Todos os associados abrangidos pelos critérios do acórdão | Acórdão dos ED-ED (abr/2026) com força executória desde 05/05/2026; cumprimento parcial pela Administração; ED-ED-ED suspensos por pedido de vista do Min. Cristiano Zanin em 15/10/2026 | 19/10/2026 | Seção 2 |
+| 2 | 0727740-19.2020.8.07.0001 | TJDFT — 24ª Vara Cível de Brasília | 31/08/2020 | PASEP — diferenças de correção e rendimentos (réu: Banco do Brasil) | Mota Advogados | Lista específica | Extinto | out/2026 | Seção 4.8 |
+| 3 | 1004692-44.2020.4.01.3400 | JFDF — 6ª Vara Federal Cível | 29/01/2020 | Auxílio-transporte — ação coletiva (IN SGDP/ME 207/2019; uso de veículo próprio) | Mota Advogados | Rol de associados | Sentença de improcedência; apelação da UNASLAF pendente no TRF-1 | jul/2023 | Seção 4.5 |
+| 4 | 1015579-87.2020.4.01.3400 | JFDF — 4ª Vara Federal Cível | 19/03/2020 | Mandado de segurança — COVID-19 / atendimento presencial na RFB | Mota Advogados | Rol de associados | Arquivado definitivamente (19/10/2021) | out/2026 | Seção 4.7 |
+| 5 | 1019847-53.2021.4.01.3400 | JFDF — 6ª Vara Federal Cível | 08/04/2021 | Abono de permanência na base do terço de férias e do 13º | Mota Advogados | Rol de associados | Procedente; TRF-1 negou apelação da União (jun/2023); desfecho posterior não informado | jul/2023 | Seção 4.9 |
+| 6 | 1023229-54.2021.4.01.3400 | JFDF — 2ª Vara Federal Cível | 26/04/2021 | Paridade de aposentados e pensionistas | Mota Advogados | Rol de associados | Réplica da UNASLAF em 08/03/2023; aguardava sentença | jul/2023 | Seção 4.10 |
+| 7 | 1074276-67.2021.4.01.3400 | JFDF — 8ª Vara Federal Cível | 19/10/2021 | Conversão em pecúnia da licença-prêmio não gozada | Mota Advogados | Rol de associados | Emenda da inicial determinada (prazo final 19/07/2023); desfecho posterior não informado | jul/2023 | Seção 4.11 |
+| 8 | 1079393-39.2021.4.01.3400 | JFDF — 5ª Vara Federal Cível | 09/11/2021 | Não incidência de IR sobre auxílio-creche / pré-escolar | Mota Advogados | Rol de associados (sentença restrita aos filiados relacionados na inicial) | Procedente, trânsito em julgado em 16/05/2022; arquivado aguardando execução | out/2026 | Seção 4.12 |
+| 9 | 1080942-84.2021.4.01.3400 (AI 1036859-27.2023.4.01.0000) | JFDF — 3ª Vara Federal Cível; agravo no TRF-1 | 16/11/2021 | Inexigibilidade da cota de participação no auxílio-creche | Mota Advogados | Rol de associados | Tutela negada; agravo de instrumento interposto | out/2026 | Seção 4.13 |
+| 10 | 1084980-42.2021.4.01.3400 | JFDF — 17ª Vara Federal Cível | 01/12/2021 | Contribuição ao RPPS — "dobra do teto" do RGPS (EC 103/2019) | Mota Advogados | Rol de associados | Aguardava citação da União | jul/2023 | Seção 4.14 |
+| 11 | 5024330-86.2020.4.03.6100 | JFSP — 17ª Vara Federal Cível | não informada | Reposição ao erário — RT 1382/92 | Mota Advogados | Lista específica | Arquivado | out/2026 | Seção 4.15 |
+| 12 | 0061254-90.1997.4.03.6100 | JFSP — 4ª Vara Federal Cível | não informada | Reajuste de 28,86% (Lei 8.627/1993) — ação de conhecimento | Mota Advogados | Lista específica | Não informada | out/2026 | Seção 4.16 |
+| 13 | 970025637-5 | JFRS — 6ª Vara Federal | não informada | Reajuste de 28,86% | Mota Advogados | Lista específica | Arquivado | out/2026 | Seção 4.16 |
+| 14 | 0031048-60.2001.4.01.3400 | JFDF — 15ª Vara Federal Cível | não informada | Reajuste de 28,86% | Mota Advogados | Lista específica | Arquivado | out/2026 | Seção 4.16 |
+| 15 | 38782-33.1999.4.01.3400 | JFSP — 4ª Vara Federal Cível (conforme planilha) | não informada | Reajuste de 28,86% | Mota Advogados | Lista específica | Arquivado | out/2026 | Seção 4.16 |
+| 16 | 8426-69.2010.4.01.3400 | JFDF | não informada | Averbação, cômputo e conversão de tempo de serviço especial | Mota Advogados | Não informado | Não informada | out/2026 | Seção 4.17 |
+| 17 | 1022299-41.2018.4.01.3400 | JFDF — 22ª Vara Federal Cível | 22/10/2018 | Adicional (indenização) de fronteira — Lei 12.855/2013 | Mota Advogados | Não informado | Sentença de improcedência; apelação da UNASLAF pendente no TRF-1 | jul/2023 | Seção 4.1 |
+| 18 | 1024043-71.2018.4.01.3400 | JFDF — 2ª Vara Federal Cível | não informada | IN 02/2018 — abono de ponto de dirigentes para atividades da entidade | Mota Advogados | Entidade/dirigentes | Sentença de improcedência; apelação da UNASLAF (02/02/2023) | jul/2023 | Seção 4.2 |
+| 19 | 0727196-31.2020.8.07.0001 (origem 1012481-65.2018.4.01.3400; REsp 1.987.466/DF) | TJDFT — 6ª Vara Cível de Brasília; STJ (Rel. Min. Humberto Martins) | 28/06/2018 (JFDF) | Danos materiais — reajustes da GEAP (Resoluções 99/2015, 168/2016 e 269/2017) | Mota Advogados | Rol de associados | Improcedente nas instâncias ordinárias; recurso especial admitido e concluso no STJ | jul/2023 | Seção 4.3 |
+| 20 | 1007732-68.2019.4.01.3400 | JFDF — 6ª Vara Federal Cível | não informada | Desconto em folha das mensalidades associativas — MP 873/2019 | Mota Advogados | Entidade/dirigentes | Procedente; apelação da União pendente no TRF-1 | jul/2023 | Seção 4.4 |
+| 21 | 1009517-65.2019.4.01.3400 | JFDF — 22ª Vara Federal Cível | não informada | Auxílio-transporte — grupo específico de servidores | Mota Advogados | Lista específica | Procedente; apelação da União conclusa no TRF-1 | jul/2023 | Seção 4.6 |
+| 22 | 2005.71.00.020255-3 | JFRS | não informada | Execução de sentença — ação principal nº 97.00.023625-0/RS (28,86%) | Mota Advogados | Lista específica | Não informada | out/2026 | Seção 4.16 |
+| 23 | 5002118-66.2011.4.04.7100 | JFRS | não informada | Execução de sentença — ação principal nº 97.00.023625-0/RS (28,86%) | Mota Advogados | Lista específica | Não informada | out/2026 | Seção 4.16 |
+| 24 | 5002121-21.2011.4.04.7100 | JFRS | não informada | Embargos à execução — ação principal nº 97.00.023625-0/RS (28,86%) | Mota Advogados | Não informado | Arquivado | out/2026 | Seção 4.16 |
+| 25 | 5005264-18.2011.4.04.7100 | JFRS | não informada | Embargos à execução — ação principal nº 97.00.023625-0/RS (28,86%) | Mota Advogados | Não informado | Arquivado | out/2026 | Seção 4.16 |
+| 26 | 5053568-38.2017.4.04.7100 | JFRS | não informada | Execução de sentença — ação principal nº 97.00.023625-0/RS (28,86%) | Mota Advogados | Lista específica | Não informada | out/2026 | Seção 4.16 |
+| 27 | 0055884-14.2012.4.01.3400 | JFDF — 1ª Vara Federal Cível | 13/11/2012 | Ação ordinária — transformação no cargo de Analista-Tributário | Raphael Malinverni | Lista específica | Não informada | out/2026 | Seção 5 |
+| 28 | 0005911-80.2018.4.01.3400 | JFDF — 7ª Vara Federal Cível | não informada | Execução provisória 1 — nomenclatura | Raphael Malinverni | Lista específica | Não informada | out/2026 | Seção 5 |
+| 29 | 0012872-86.2008.4.01.3400 | JFDF — 7ª Vara Federal Cível | 22/04/2008 | Correção de nomenclatura | Raphael Malinverni | Lista específica | Não informada | out/2026 | Seção 5 |
+| 30 | 0020259-84.2010.4.01.3400 | JFDF — 22ª Vara Federal Cível | 27/04/2010 | Contra descontos de contribuição previdenciária (INSS) sobre o terço de férias | Raphael Malinverni | Não informado | Não informada | out/2026 | Seção 5 |
+| 31 | 0038104-37.2007.4.01.3400 | JFDF — 16ª Vara Federal Cível | 29/10/2007 | Suspensão do prazo de retorno ao INSS | Raphael Malinverni | Não informado | Arquivado | out/2026 | Seção 5 |
+| 32 | 1018458-28.2024.4.01.3400 | JFDF — 7ª Vara Federal Cível | 21/03/2024 | Execução provisória 2 — nomenclatura | Raphael Malinverni | Lista específica | Arquivado | out/2026 | Seção 5 |
+| 33 | 0036028-35.2010.4.01.3400 | JFDF — 9ª Vara Federal Cível | não informada | Exclusão do PECFAZ | Raphael Malinverni | Não informado | Apelação e embargos de declaração da União rejeitados | out/2026 | Seção 5 |
+| 34 | 1098257-23.2024.4.01.3400 | JFDF — 7ª Vara Federal Cível | 03/12/2024 | Segunda correção de nomenclatura | Raphael Malinverni | Lista específica | Não informada | out/2026 | Seção 5 |
+| 35 | 0031897-85.2008.4.01.3400 | JFDF | não informada | Suspensão do art. 256-A (PECFAZ) | Raphael Malinverni | Não informado | Não informada | out/2026 | Seção 5 |
+| 36 | 1014667-95.2026.4.01.0000 | TRF-1 — 1ª Turma | 20/04/2026 | Agravo de instrumento no MS contra a Portaria DGP/SSC/MGI nº 1.985/2026 (exclusão de aposentados da transformação) | Saliba e Malinverni | Lista específica (12 associados) | Decisão favorável: restabelecimento do enquadramento; MGI ainda mantinha a portaria em set/2026 | set/2026 | Seção 3 |
+| 37 | 1021420-53.2026.4.01.3400 | JFDF — 18ª Vara Federal Cível | 04/03/2026 | Mandado de segurança contra a Portaria DGP/SSC/MGI nº 1.985/2026 | Saliba e Malinverni | Lista específica (12 associados) | Em tramitação; ver agravo nº 1014667-95.2026.4.01.0000 | set/2026 | Seção 3 |
+| 38 | 5007253-93.2022.4.03.6100 (origem 1005217-89.2021.4.01.3400; AI 5014983-25.2022.4.03.0000) | JFSP — 17ª Vara Federal Cível; agravo no TRF-3 | 29/03/2022 | Reposição ao erário — RT 1382/92 | Mota Advogados | Não informado | Juízo aguardava julgamento do agravo de instrumento da UNASLAF | jul/2023 | Seção 4.15 |
+---
+
+## 2. ADI Nº 4.151/DF — TRANSFORMAÇÃO DOS CARGOS (STF)
+
+**Tribunal:** Supremo Tribunal Federal · **Relator:** Min. Gilmar Mendes · **Autora:** UNASLAF · **Beneficiários:** categoria representada (critérios abaixo) · **Situação em:** 19/10/2026
+
+### 2.1 Do que trata
+A ADI 4.151 discutiu a exclusão dos cargos da Carreira do Seguro Social redistribuídos à RFB da transformação de cargos prevista no art. 10, inciso II, da Lei nº 11.457/2007. O STF deu interpretação conforme à Constituição para incluir os cargos de **Analista do Seguro Social** e de **Técnico do Seguro Social** nos preceitos e efeitos do art. 10, II, com a consequente transformação no cargo de **Analista-Tributário da Receita Federal do Brasil**.
+
+### 2.2 O que o STF decidiu (embargos de declaração — ED-ED, Plenário, unanimidade, Sessão Virtual de 17 a 28/04/2026)
+a) **Analistas do Seguro Social:** efeitos a partir de **7 de abril de 2022** (data da cautelar ratificada na ADI 6.966).
+b) **Técnicos do Seguro Social:** incluídos nos termos da Lei nº 10.855/2004, Anexo V, alínea "b", Tabela III, **excluídos os que não foram redistribuídos à RFB ou que optaram pelo retorno ao INSS**.
+c) **Técnicos do Seguro Social:** efeitos a partir de **6 de setembro de 2024**.
+d) A decisão também alcança os **servidores inativos** que estavam em exercício na antiga SRP, foram transferidos para a RFB e lá se aposentaram, conforme o regime previdenciário aplicável a cada um.
+
+Ponto importante: o voto do Relator nos ED-ED registrou que a Tabela III da Lei 10.855/2004 reúne sob a denominação única de Técnico do Seguro Social cargos de origens diferentes (por exemplo, Técnico Previdenciário, Agente Administrativo, Escriturário, Secretária, Técnico de Secretariado), e que não seria adequado segmentá-los para contemplar só uma parte.
+
+### 2.3 Força executória
+- A ata do julgamento foi publicada em **05/05/2026**.
+- A própria Advocacia-Geral da União, pelo **Ofício nº 01412/2026/SGCT/AGU (08/05/2026)**, certificou à Consultoria Jurídica do MGI a força executória da decisão a partir dessa data. O Ofício nº 01413/2026/SGCT/AGU comunicou a decisão à PGFN "para ciência e observância pela Administração".
+- Ou seja, desde maio de 2026 a decisão deve ser cumprida.
+
+### 2.4 Cumprimento: onde está o problema
+- A Nota Informativa SEI nº 718/2024/MF, da COGEP/RFB, já havia identificado **657 servidores** abrangidos; desses, apenas **180** foram transformados até agora.
+- A **NOTA nº 00375/2026/CONJUR-MGI/CGU/AGU** (02/06/2026) fixou critérios de alcance: (a) ocupar o cargo de Técnico do Seguro Social na forma da Lei 10.855/2004, Anexo V, "b", Tabela III; (b) ter sido redistribuído à RFB; (c) não ter optado pelo retorno ao INSS; (d) para os inativos, ter passado à inatividade na RFB **após 06/09/2024**. A UNASLAF contesta o critério (d) e a exclusão de aposentados e pensionistas anteriores a essa data, que constam da **Portaria DGP/SSC/MGI nº 1.985/2026**.
+- A **Portaria DGP/SSC/MGI nº 3.043/2025** é a portaria de enquadramento (transformação). A Portaria nº 1.985/2026 tornou sem efeito o Anexo II dela, que tratava de aposentados e instituidores de pensão.
+- A UNASLAF entende que **datas de efeitos financeiros** (7/4/2022 e 6/9/2024) **não se confundem com quem tem direito**: a modulação trata de quando os efeitos começam, e não exclui quem se aposentou antes.
+- A Administração (MGI) também vem indeferindo pedidos de Técnicos do Seguro Social cujo cargo de origem não era o de Técnico Previdenciário (p. ex., Nota Técnica SEI nº 47314/2026/MGI, out/2026). A UNASLAF sustenta que isso contraria o acórdão, que não permite separar os TSS pela origem do cargo.
+- A COGEP/RFB, em ofícios de agosto de 2026, afirmou não ter competência para definir quem está abrangido e que não haveria pendências a seu cargo. Em reunião de **28/09/2026**, o Secretário Especial da RFB informou que trataria do assunto com o MGI. Em outubro de 2026 o processo administrativo (NUP 90849.003014/2024-81) foi encaminhado ao MGI (CODEJ/DIDEJ/DGP).
+- Outra frente: parecer da CONJUR-MGI (Parecer nº 00413/2026) defende pagar os **valores retroativos por precatório**. A UNASLAF sustenta o pagamento em folha.
+
+### 2.5 Recurso pendente no STF (ED-ED-ED)
+- Há novos embargos de declaração da UNASLAF (e de um amicus curiae, a ANARF) em julgamento.
+- O Relator, Min. Gilmar Mendes, votou no sentido de **esclarecer que o acórdão não distinguiu servidores pela data da aposentadoria**, sendo descabida a separação entre os que se aposentaram antes ou depois de 6/9/2024. O voto não conhece dos embargos da ANARF.
+- O julgamento foi suspenso por pedido de vista do Min. Dias Toffoli (17/08/2026). Retomado na sessão virtual de 09 a 19/10/2026, foi **novamente suspenso em 15/10/2026 por pedido de vista do Min. Cristiano Zanin**. Até então, **4 votos** acompanhavam o Relator no ponto de maior interesse da categoria (Gilmar Mendes, Alexandre de Moraes, Cármen Lúcia e Dias Toffoli).
+- **Não há ainda decisão final** sobre esses embargos. Enquanto isso, o acórdão unânime de abril de 2026 continua com força executória, e a UNASLAF adotará novas providências para denunciar o descumprimento e pedir a implementação do julgado.
+
+### 2.6 O que o associado pode fazer
+- A UNASLAF disponibilizou **modelos de reclamação/requerimento administrativo** para protocolo pelos próprios associados na Ouvidoria do MGI (plataforma **Fala.BR**): um para servidores **em atividade** ocupantes do cargo de Técnico do Seguro Social e um simplificado para **aposentados e pensionistas**. Oriente o associado a procurar esses modelos nos canais da UNASLAF ou a pedi-los à Diretoria Jurídica.
+- O assistente não deve afirmar se determinado associado será ou não transformado: isso depende dos dados funcionais de cada um, que constam dos registros da RFB.
+
+---
+
+## 3. MANDADO DE SEGURANÇA SOBRE A PORTARIA Nº 1.985/2026 (APOSENTADOS — LISTA ESPECÍFICA)
+
+**Processos:** MS nº 1021420-53.2026.4.01.3400 (18ª Vara Federal Cível da JFDF, distribuído em 04/03/2026) e Agravo de Instrumento nº 1014667-95.2026.4.01.0000 (TRF-1, 1ª Turma, distribuído em 20/04/2026) · **Escritório:** Saliba e Malinverni · **Beneficiários:** lista específica de 12 associados · **Situação em:** set/2026
+
+- Objeto: impugnar a Portaria DGP/SSC/MGI nº 1.985/2026, que excluiu aposentados e instituidores de pensão da transformação.
+- No agravo, o **TRF-1 afastou a tese da União de excluir os inativos em abstrato** e determinou o **restabelecimento do enquadramento**. Também distinguiu quem tem direito (inativos incluídos) de quando começam os efeitos financeiros (a partir de 6/9/2024).
+- Documento do MGI de set/2026 (Nota Informativa SEI nº 29991/2026) mantém a Portaria 1.985/2026, o que indica que a liminar ainda não havia sido cumprida.
+- Vale **apenas para os 12 associados que constam do processo**. É um precedente favorável, mas não estende automaticamente o direito aos demais.
+
+---
+
+## 4. AÇÕES COLETIVAS — ESCRITÓRIO MOTA ADVOGADOS
+
+> Atenção: a situação processual detalhada abaixo vem do relatório do escritório **atualizado em julho de 2023**, salvo quando indicada a fonte de 2026 (planilha de controle da UNASLAF, out/2026). Informe sempre a data ao associado.
+
+### 4.1 Adicional de Fronteira (pasta 10H25)
+- **Processo:** 1022299-41.2018.4.01.3400 — 22ª Vara Federal Cível/JFDF.
+- **Objeto:** indenização de fronteira (Lei nº 12.855/2013) para os servidores da Carreira do Seguro Social redistribuídos à RFB em exercício em localidades estratégicas, desde o Decreto nº 9.227/2017.
+- **Andamento:** tutela negada; sentença de improcedência (abr/2020); embargos rejeitados (jan/2021); **apelação da UNASLAF** interposta em 13/07/2021; redistribuída no TRF-1 em 05/2023. Aguardava julgamento (jul/2023).
+
+### 4.2 IN nº 02/2018 — Jornada de trabalho / abono de ponto para dirigentes (pasta 10H26)
+- **Processo:** MS coletivo 1024043-71.2018.4.01.3400 — JFDF.
+- **Objeto:** afastar o art. 36 da IN 02/2018 para que dirigentes da UNASLAF participem de atividades da entidade sem compensar horas.
+- **Andamento:** liminar indeferida; sentença de improcedência (nov/2021); embargos rejeitados (nov/2022); **apelação da UNASLAF** em 02/02/2023.
+
+### 4.3 Danos materiais — reajustes da GEAP (pasta 10H27)
+- **Processos:** originalmente 1012481-65.2018.4.01.3400 (21ª Vara/JFDF); depois remetido à Justiça do DF como **0727196-31.2020.8.07.0001** (TJDFT); **REsp nº 1.987.466/DF** no STJ.
+- **Objeto:** ilegalidade das Resoluções GEAP/CAND nº 99/2015, 168/2016 e 269/2017 (aumento das contribuições) e devolução de diferenças.
+- **Andamento:** a Justiça Federal excluiu a União e remeteu o caso ao TJDFT; sentença de improcedência mantida em apelação (nov/2021); **recurso especial** admitido em 07/02/2022, concluso ao Min. Humberto Martins (jul/2023).
+
+### 4.4 MP nº 873/2019 — desconto em folha das mensalidades associativas (pasta 10H29)
+- **Processo:** 1007732-68.2019.4.01.3400 — 6ª Vara Federal Cível/JFDF.
+- **Objeto:** manter o desconto em folha das mensalidades da UNASLAF, suprimido pela MP 873/2019 e pelo Decreto 9.735/2019.
+- **Andamento:** tutela deferida; **sentença de procedência** (abr/2020), que manda restabelecer a consignação; apelação da União remetida ao TRF-1 em out/2020, aguardando julgamento. Beneficiária: a entidade (planilha indica "diretores UNASLAF").
+
+### 4.5 Auxílio-transporte — ação coletiva
+- **Processo:** 1004692-44.2020.4.01.3400 — 6ª Vara Federal Cível/JFDF (distribuída em 29/01/2020).
+- **Objeto:** invalidar a IN SGDP/ME nº 207/2019 e garantir o auxílio-transporte independentemente do meio de transporte (inclusive veículo próprio), com devolução do que foi suprimido.
+- **Andamento:** tutela negada; sentença de improcedência (02/08/2021); embargos rejeitados (02/03/2022); **apelação da UNASLAF** (04/04/2022); redistribuída no TRF-1 em 05/2023.
+
+### 4.6 Auxílio-transporte — grupo específico (pasta 10H30)
+- **Processo:** 1009517-65.2019.4.01.3400 — 22ª Vara Federal Cível/JFDF.
+- **Objeto:** manter o auxílio-transporte, inclusive com veículo próprio, para os servidores listados na inicial.
+- **Andamento:** tutela deferida; **sentença de procedência** (12/03/2020), com pagamento das diferenças observada a prescrição de 5 anos; apelação da União (17/03/2021), conclusa no TRF-1 desde 07/02/2022. **Beneficiários: só os servidores listados.**
+
+### 4.7 Mandado de segurança — COVID-19 / atendimento presencial
+- **Processo:** 1015579-87.2020.4.01.3400 — 4ª Vara Federal Cível/JFDF.
+- **Objeto:** restringir o atendimento presencial nas unidades da RFB durante a pandemia.
+- **Andamento:** liminar deferida e depois segurança denegada (out/2020); embargos rejeitados; **arquivado definitivamente** em 19/10/2021. Ação encerrada.
+
+### 4.8 PASEP
+- **Processo:** 0727740-19.2020.8.07.0001 — 24ª Vara Cível/TJDFT (distribuída em 31/08/2020) · Réu: Banco do Brasil · Beneficiários: lista específica.
+- **Objeto:** diferenças de correção e rendimentos nas contas PASEP.
+- **Andamento:** suspenso por IRDR e pelo Tema/SIRDR 9 do STJ (2020–2022). **Planilha de out/2026: extinto.**
+
+### 4.9 Abono de permanência no terço de férias e no 13º
+- **Processo:** 1019847-53.2021.4.01.3400 — 6ª Vara Federal Cível/JFDF.
+- **Objeto:** incluir o abono de permanência na base de cálculo do terço de férias e da gratificação natalina, para ativos, aposentados e pensionistas, observados 5 anos.
+- **Andamento:** **sentença de procedência** (08/04/2022). Em **junho de 2023 o TRF-1 negou a apelação da União** e deu provimento à da UNASLAF (honorários sobre o valor da condenação). Também afirmou que a decisão coletiva não se limita territorialmente (Tema 1.075/STF). Prazo de recurso da União até 14/08/2023. Desfecho posterior: não informado neste documento.
+
+### 4.10 Paridade de aposentados e pensionistas
+- **Processo:** 1023229-54.2021.4.01.3400 — 2ª Vara Federal Cível/JFDF.
+- **Objeto:** revisar aposentadorias e pensões para garantir a paridade com os ativos, inclusive em gratificações de desempenho e reestruturações de carreira, e garantir a paridade futura.
+- **Andamento:** valor da causa aceito (05/2022); contestação da União (08/2022); **réplica da UNASLAF** (08/03/2023). Aguardava sentença (jul/2023).
+
+### 4.11 Conversão em dinheiro da licença-prêmio não gozada
+- **Processo:** 1074276-67.2021.4.01.3400 — 8ª Vara Federal Cível/JFDF.
+- **Objeto:** converter em pecúnia, na aposentadoria, a licença-prêmio/especial não gozada, sem imposto de renda (Súmula 136/STJ).
+- **Andamento:** o juízo exigiu emenda da inicial (valor da causa e comprovação de hipossuficiência); prazo final em 19/07/2023. Desfecho posterior: não informado neste documento.
+
+### 4.12 Imposto de renda sobre auxílio-creche / pré-escolar
+- **Processo:** 1079393-39.2021.4.01.3400 — 5ª Vara Federal Cível/JFDF.
+- **Objeto:** não incidência de IR sobre o auxílio-creche e restituição dos últimos 5 anos.
+- **Andamento:** **sentença de procedência** (17/03/2022), não recorrida; **trânsito em julgado em 16/05/2022**. Restituição pela Selic, para os associados relacionados na inicial (valores anteriores a 09/11/2016 prescritos). **Planilha de out/2026: arquivado, aguardando execução.**
+
+### 4.13 Cota de participação no auxílio-creche
+- **Processo:** 1080942-84.2021.4.01.3400 — 3ª Vara Federal Cível/JFDF.
+- **Objeto:** afastar o desconto da cota de participação do servidor no custeio do auxílio pré-escolar/creche e devolver o descontado.
+- **Andamento:** tutela negada (24/01/2023); **agravo de instrumento nº 1036859-27.2023.4.01.0000** (TRF-1), segundo a planilha de 2026.
+
+### 4.14 Contribuição previdenciária — "dobra do teto do RGPS"
+- **Processo:** MS coletivo 1084980-42.2021.4.01.3400 — 17ª Vara Federal Cível/JFDF.
+- **Objeto:** impedir a cobrança imediata da contribuição ao RPPS sobre aposentadorias e pensões sem a isenção da "dobra do teto" do RGPS, sem respeitar o prazo de 90 dias após a EC 103/2019.
+- **Andamento:** a UNASLAF confirmou interesse no prosseguimento (15/03/2023); aguardava citação da União (jul/2023).
+
+### 4.15 Reposição ao erário — RT 1382/92
+- **Processos:** 5024330-86.2020.4.03.6100 (17ª Vara Federal/JFSP — **arquivado**) e **5007253-93.2022.4.03.6100** (17ª Vara Federal/JFSP, distribuído em 29/03/2022, vindo da JFDF, onde tinha o nº 1005217-89.2021.4.01.3400); agravo de instrumento nº 5014983-25.2022.4.03.0000 (TRF-3).
+- **Objeto:** anular a cobrança, em processo administrativo, de valores recebidos por força da Reclamação Trabalhista nº 0138200-51.1992.5.02.0044 (rubrica RT 1382/92), cuja decisão foi depois rescindida.
+- **Andamento:** o juízo exigiu documentos sobre os associados afetados; a UNASLAF agravou (06/2022); aguardava o agravo (jul/2023).
+- Tema relacionado: a **ASPLAF** (entidade coirmã) discute a reposição ao erário no STJ, no **AREsp nº 3.135.204/SP**, originado de mandado de segurança coletivo do TRF-3. O recurso especial da União não foi conhecido por decisão do Min. Francisco Falcão; a União interpôs agravo interno, respondido pela ASPLAF. Esse processo é da ASPLAF, não da UNASLAF.
+
+### 4.16 Reajuste de 28,86% (Lei nº 8.627/1993) e execuções
+- **Processos (lista específica):** 0061254-90.1997.4.03.6100 (4ª Vara Cível/JFSP); 970025637-5 (JFRS — arquivado); 0031048-60.2001.4.01.3400 (JFDF — arquivado); 38782-33.1999.4.01.3400 (arquivado).
+- **Execuções da ação principal nº 97.00.023625-0/RS (JFRS):** 2005.71.00.020255-3; 5002118-66.2011.4.04.7100; 5053568-38.2017.4.04.7100; embargos à execução 5002121-21.2011.4.04.7100 e 5005264-18.2011.4.04.7100 (arquivados).
+- Beneficiários: apenas os associados nominados em cada processo. **Não divulgue nomes.**
+
+### 4.17 Tempo de serviço especial
+- **Processo:** 8426-69.2010.4.01.3400 — JFDF. **Objeto:** averbação, cômputo e conversão de tempo de serviço especial. Situação: não informada neste documento.
+
+---
+
+## 5. AÇÕES DE LISTA ESPECÍFICA — ADV. RAPHAEL MALINVERNI
+
+Todas beneficiam **somente os associados nominados** no processo. As situações não estão detalhadas, salvo indicação.
+
+| Processo | Vara | Distribuição | Objeto | Situação |
+|---|---|---|---|---|
+| 0055884-14.2012.4.01.3400 | 1ª Vara Cível/JFDF | 13/11/2012 | Ação ordinária — transformação no cargo de Analista-Tributário | não informada |
+| 0012872-86.2008.4.01.3400 | 7ª Vara Cível/JFDF | 22/04/2008 | Correção de nomenclatura | não informada |
+| 0005911-80.2018.4.01.3400 | 7ª Vara Cível/JFDF | — | Execução provisória 1 — nomenclatura | não informada |
+| 1018458-28.2024.4.01.3400 | 7ª Vara Cível/JFDF | 21/03/2024 | Execução provisória 2 — nomenclatura | arquivado |
+| 1098257-23.2024.4.01.3400 | 7ª Vara Cível/JFDF | 03/12/2024 | Segunda correção de nomenclatura | não informada |
+| 0020259-84.2010.4.01.3400 | 22ª Vara Cível/JFDF | 27/04/2010 | Contra desconto de contribuição previdenciária sobre o terço de férias | não informada |
+| 0038104-37.2007.4.01.3400 | 16ª Vara Cível/JFDF | 29/10/2007 | Suspensão do prazo de retorno ao INSS | arquivado |
+| 0036028-35.2010.4.01.3400 | 9ª Vara Cível/JFDF | — | Exclusão do PECFAZ | apelação e embargos da União rejeitados |
+| 0031897-85.2008.4.01.3400 | JFDF | — | Suspensão do art. 256-A (PECFAZ) | não informada |
+
+---
+
+## 6. PERGUNTAS FREQUENTES (FAQ)
+
+**A decisão da ADI 4.151 já está valendo?**
+Sim. O acórdão dos embargos de abril de 2026 tem força executória desde a publicação da ata, em 05/05/2026, como reconheceu a própria AGU (Ofício nº 01412/2026/SGCT/AGU). O que falta é a Administração implementar a transformação para todos os alcançados.
+
+**Sou aposentado(a) antes de setembro de 2024. Tenho direito?**
+A decisão do STF inclui os inativos que estavam na antiga SRP, foram para a RFB e lá se aposentaram, e não fez distinção pela data da aposentadoria. O MGI, porém, vem excluindo quem se aposentou antes de 06/09/2024 (Portaria nº 1.985/2026). A UNASLAF contesta essa exclusão no STF, e o voto do Relator nos embargos pendentes confirma que não cabe essa separação. O julgamento ainda não terminou (vista do Min. Zanin em 15/10/2026). A data de 6/9/2024 é o início dos efeitos financeiros, e não um corte de quem tem direito.
+
+**Meu cargo de origem não era Técnico Previdenciário (era Agente Administrativo, por exemplo). Estou incluído(a)?**
+O STF incluiu o cargo de Técnico do Seguro Social conforme a Tabela III da Lei 10.855/2004, que reúne cargos de várias origens, e o voto do Relator diz que não cabe segmentá-los. A UNASLAF contesta os indeferimentos do MGI baseados na origem do cargo. Não é possível confirmar a situação individual pelo assistente; procure a Diretoria Jurídica.
+
+**Quando vou receber os atrasados?**
+Não há data. Os efeitos financeiros contam de 7/4/2022 (Analistas) e de 6/9/2024 (Técnicos). Há divergência sobre a forma de pagamento: a CONJUR/MGI defende precatório, e a UNASLAF defende pagamento em folha.
+
+**O que eu posso fazer agora?**
+Protocolar, pela Ouvidoria do MGI (Fala.BR), o modelo de reclamação/requerimento preparado pela UNASLAF para o seu caso (ativo ou aposentado/pensionista).
+
+**Como sei se estou em uma ação de "lista específica"?**
+Só a Diretoria Jurídica ou o escritório responsável pode confirmar, mediante identificação do associado. O assistente não divulga listas de beneficiários.
+
+**A ação do auxílio-creche já pagou?**
+A sentença que afastou o IR sobre o auxílio-creche transitou em julgado em 16/05/2022 e vale para os associados relacionados na inicial. Pela planilha de out/2026 o processo está arquivado, aguardando execução. Não há informação sobre pagamento.
+
+**Quem são os advogados das ações?**
+ADI 4.151: equipe jurídica da UNASLAF. Ações coletivas (pastas 10H): Mota Advogados. Transformação/nomenclatura/PECFAZ (listas específicas): Raphael Malinverni. Mandado de segurança sobre a Portaria 1.985/2026: Saliba e Malinverni.
+
+---
+
+## 7. GLOSSÁRIO RÁPIDO
+
+- **ADI:** Ação Direta de Inconstitucionalidade, julgada pelo STF, com efeito para todos.
+- **Embargos de declaração (ED):** recurso para esclarecer ou corrigir a decisão. "ED-ED" e "ED-ED-ED" indicam embargos sucessivos.
+- **Força executória:** a decisão já deve ser cumprida.
+- **Modulação de efeitos:** definição pelo STF da data a partir da qual a decisão produz efeitos.
+- **Pedido de vista:** um ministro pede mais tempo para analisar, e o julgamento fica suspenso.
+- **Lista específica × rol de associados:** na primeira, só os nominados no processo; na segunda, os associados da entidade, nos limites da decisão.
+- **Trânsito em julgado:** não cabe mais recurso.
+- **Precatório:** pagamento de dívida judicial da União em fila orçamentária, diferente do pagamento em folha.
+- **Fala.BR:** plataforma oficial de ouvidoria do Governo Federal.
+
+---
+
+*Fontes internas: planilha de controle de ações judiciais da UNASLAF (out/2026); Relatório das Ações Coletivas — Mota Advogados (jul/2023); Relatório histórico e fático COGEP/ADI 4.151 (09/09/2026); registros da Diretoria Jurídica sobre a ADI 4.151 (até 19/10/2026). Atualize este documento sempre que houver novo andamento relevante.*`
 });
 
 
