@@ -225,7 +225,6 @@ Como está o andamento do processo do PIS/PASEP? Qual foi a sentença do juiz?
 Como será o procedimento para que os associados entrem individualmente com a mesma ação?
 
 
-
 GEAP
 A Unaslaf possui algum desconto ou benefício para associados na GEAP?
 Não.
